@@ -20,21 +20,21 @@ return new class extends Migration
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled', 'in-check'])->default('pending');
             $table->double('total');
             $table->double('delivery_fee');
-            $table->string('payment_method_code')->nullable()->after('delivery_fee');
-            $table->string('postal_code')->nullable()->after('city_id');
-            $table->string('special_mark')->nullable()->after('postal_code'); // Landmark etc.
-            $table->text('notes')->nullable()->after('special_mark'); // Customer notes for delivery
+            $table->string('payment_method_code')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('special_mark')->nullable(); // Landmark etc.
+            $table->text('notes')->nullable(); // Customer notes for delivery
 
             // Add tracking code (unique identifier for customer tracking)
-            $table->string('track_code')->unique()->nullable()->after('status');
+            $table->string('track_code')->unique()->nullable();
 
             // Add subtotal, discount, tax if needed
-            $table->decimal('subtotal', 10, 2)->default(0.00)->after('status');
-            $table->decimal('discount_amount', 10, 2)->default(0.00)->after('subtotal');
-            $table->string('phone_number')->after('customer_id'); // Contact for this specific order
-            $table->string('address_line_1')->after('phone_number');
-            $table->string('address_line_2')->nullable()->after('address_line_1');
-            $table->foreignIdFor(City::class)->after('address_line_2')->constrained()->onDelete('restrict'); // Link to city
+            $table->decimal('subtotal', 10, 2)->default(0.00);
+            $table->decimal('discount_amount', 10, 2)->default(0.00);
+            $table->string('phone_number'); // Contact for this specific order
+            $table->string('address_line_1');
+            $table->string('address_line_2')->nullable();
+            $table->foreignIdFor(City::class)->constrained()->onDelete('restrict'); // Link to city
             $table->timestamps();
         });
     }

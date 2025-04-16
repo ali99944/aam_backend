@@ -16,9 +16,9 @@ return new class extends Migration
             $table->string('action_type');
             $table->json('data');
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->foreignId('requested_by_user_id')->nullable()->after('id')->constrained('users')->onDelete('set null');
+            $table->foreignId('requested_by_user_id')->nullable()->constrained('users')->onDelete('set null');
              // User who approved/rejected the request
-             $table->foreignId('processed_by_user_id')->nullable()->after('status')->constrained('users')->onDelete('set null');
+             $table->foreignId('processed_by_user_id')->nullable()->constrained('users')->onDelete('set null');
              $table->timestamp('processed_at')->nullable();
              $table->text('rejection_reason')->nullable();
             $table->timestamps();

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->enum('status', ['active', 'banned', 'verification-required'])->default('active')->after('remember_token'); // Adjust default as needed
-            $table->boolean('is_banned')->default(false)->after('status');
-            $table->timestamp('banned_at')->nullable()->after('is_banned');
-            $table->text('ban_reason')->nullable()->after('banned_at');
+            $table->boolean('is_banned')->default(false);
+            $table->timestamp('banned_at')->nullable();
+            $table->text('ban_reason')->nullable();
 
             // Add index for faster lookups
             $table->index('status');
