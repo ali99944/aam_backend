@@ -45,7 +45,7 @@
     </div>
 
     {{-- Core JS (e.g., for sidebar toggle if using same structure) --}}
-    <script src="{{ asset('js/admin.js') }}"></script> {{-- Or company.js --}}
+    <script src="{{ asset('admin.js') }}"></script> {{-- Or company.js --}}
     @stack('scripts')
 </body>
 </html>
