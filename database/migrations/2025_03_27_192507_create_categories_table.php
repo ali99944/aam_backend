@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('is_active')->default(true);
             $table->string('is_featured')->default(false);
             $table->integer('total_sub_categories')->default(0);
-            $table->string('cover_image')->nullable()->after('description');
-            $table->string('icon_image')->nullable()->after('cover_image');
+            $table->string('cover_image')->nullable();
+            $table->string('icon_image')->nullable();
             $table->timestamps();
         });
     }
