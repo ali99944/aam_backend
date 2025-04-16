@@ -1,0 +1,107 @@
+/* public/css/common.css */
+
+/* --- Cards --- */
+.card {
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    box-shadow: var(--box-shadow-sm);
+    overflow: hidden; /* Contain child elements like tables */
+}
+.card-header {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-header h2, .card-header h3 {
+    margin-bottom: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+.card-body {
+    padding: 20px;
+}
+.card-footer {
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+}
+
+
+/* --- Tables (Refinements/Overrides if needed beyond admin.css) --- */
+.table-responsive {
+    overflow-x: auto;
+    width: 100%;
+    margin-bottom: 0; /* Remove bottom margin if inside card-body */
+}
+.card .table-responsive {
+    margin-left: -20px;  /* Counteract card-body padding LTR */
+    margin-right: -20px; /* Counteract card-body padding LTR */
+    width: calc(100% + 40px); /* Span full card width */
+}
+html[dir="rtl"] .card .table-responsive {
+    margin-left: -20px;
+    margin-right: -20px;
+}
+
+.card .admin-table {
+    margin-top: 0; /* Remove top margin when inside a card */
+    border: none; /* Remove table border if card provides outline */
+    border-bottom: 1px solid var(--border-color); /* Keep bottom border */
+}
+.card .admin-table th,
+.card .admin-table td {
+     border-top: 1px solid var(--border-color);
+     border-left: none; /* Remove vertical lines inside card */
+     border-right: none;
+     padding-left: 20px; /* Align with card padding LTR */
+     padding-right: 20px; /* Align with card padding LTR */
+}
+.card .admin-table thead th {
+     border-top: none; /* No top border for header */
+     background-color: transparent; /* Use card header/body background */
+}
+.card .admin-table tbody tr:last-child td {
+     border-bottom: none; /* No bottom border for last row */
+}
+
+
+/* --- Badges (Refinements/Overrides if needed beyond admin.css) --- */
+/* Add any specific badge styles if needed here */
+
+
+/* --- Utility Classes --- */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.mb-5 { margin-bottom: 3rem !important; }
+
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mt-5 { margin-top: 3rem !important; }
+
+/* Add ml, mr, pl, pr etc. as needed, respecting RTL */
+.mr-1 { margin-right: 0.25rem !important; } /* LTR */
+.mr-2 { margin-right: 0.5rem !important; } /* LTR */
+.ml-1 { margin-left: 0.25rem !important; } /* LTR */
+.ml-2 { margin-left: 0.5rem !important; } /* LTR */
+
+html[dir="rtl"] .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+html[dir="rtl"] .ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+html[dir="rtl"] .ml-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+
+/* Display Helpers */
+.d-block { display: block !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex { display: flex !important; }
+.align-items-center { align-items: center !important; }

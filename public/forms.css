@@ -1,0 +1,214 @@
+/* public/css/forms.css */
+
+/* --- Base Form Styling (covered in admin.css, add overrides if needed) --- */
+/* .admin-form {} */
+/* .form-group {} */
+/* .admin-form label {} */
+/* .admin-form input[type=...], textarea, select {} */
+/* .admin-form input:focus, textarea:focus, select:focus {} */
+/* .admin-form textarea {} */
+/* .admin-form .form-actions {} */
+
+
+/* --- Inline Forms (e.g., for search) --- */
+.form-inline {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center; /* Align items vertically */
+}
+.form-inline .form-group {
+    margin-right: 10px; /* LTR */
+    margin-bottom: 10px; /* Allow wrapping */
+}
+html[dir="rtl"] .form-inline .form-group {
+    margin-right: 0;
+    margin-left: 10px;
+}
+.form-inline label {
+    margin-bottom: 0; /* Labels sit beside inputs */
+}
+.form-inline .form-control {
+    display: inline-block; /* Allow inputs/buttons to sit inline */
+    width: auto; /* Adjust width as needed */
+    vertical-align: middle;
+}
+.form-inline .btn {
+    margin-bottom: 10px; /* Align with wrapped form-groups */
+}
+
+
+/* --- Checkboxes & Radios --- */
+.form-check {
+    display: block;
+    min-height: 1.5rem; /* line-height */
+    padding-left: 1.75em; /* Space for input */
+    margin-bottom: 0.125rem;
+    position: relative; /* Needed for absolute positioning if customizing further */
+}
+.form-check .form-check-input {
+    float: left; /* LTR */
+    margin-left: -1.75em; /* Pull input into padding area LTR */
+}
+html[dir="rtl"] .form-check {
+    padding-left: 0;
+    padding-right: 1.75em;
+}
+html[dir="rtl"] .form-check .form-check-input {
+    float: right;
+    margin-left: 0;
+    margin-right: -1.75em;
+}
+
+.form-check-input {
+    width: 1em;
+    height: 1em;
+    margin-top: 0.25em; /* Align with text */
+    vertical-align: top;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    border: 1px solid rgba(0,0,0,.25);
+    appearance: none; /* Remove default appearance */
+    color-adjust: exact; /* For print */
+    transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+.form-check-input[type=checkbox] {
+    border-radius: 0.25em;
+}
+.form-check-input[type=radio] {
+    border-radius: 50%;
+}
+
+/* Checked State */
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.form-check-input:checked[type=checkbox] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+.form-check-input:checked[type=radio] {
+     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* Focus State */
+.form-check-input:focus {
+    border-color: #86b7fe; /* Bootstrap's focus blue */
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); /* Bootstrap's focus shadow */
+}
+.form-check-input:active {
+    filter: brightness(90%);
+}
+
+/* Disabled State */
+.form-check-input:disabled {
+    pointer-events: none;
+    filter: none;
+    opacity: 0.5;
+}
+.form-check-label {
+    cursor: pointer; /* Indicate clickable label */
+}
+.form-check-input:disabled ~ .form-check-label {
+    cursor: default;
+    opacity: 0.5;
+}
+
+
+/* --- Switch Style --- */
+.form-switch {
+    padding-left: 2.5em; /* More padding for switch LTR */
+}
+html[dir="rtl"] .form-switch {
+    padding-left: 0;
+    padding-right: 2.5em;
+}
+.form-switch .form-check-input {
+    width: 2em; /* Wider for switch */
+    margin-left: -2.5em; /* Pull back into padding LTR */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0, 0, 0, 0.25)'/%3e%3c/svg%3e");
+    background-position: left center; /* Start left LTR */
+    border-radius: 2em; /* Fully rounded */
+    transition: background-position .15s ease-in-out;
+}
+html[dir="rtl"] .form-switch .form-check-input {
+    margin-left: 0;
+    margin-right: -2.5em;
+    background-position: right center; /* Start right RTL */
+}
+
+.form-switch .form-check-input:focus {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2386b7fe'/%3e%3c/svg%3e"); /* Focus color */
+}
+
+.form-switch .form-check-input:checked {
+    background-position: right center; /* End right LTR */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e"); /* White knob */
+}
+html[dir="rtl"] .form-switch .form-check-input:checked {
+    background-position: left center; /* End left RTL */
+}
+
+/* --- Validation States --- */
+.is-invalid {
+    border-color: var(--danger-color) !important; /* Ensure override */
+     padding-right: calc(1.5em + .75rem); /* Space for icon LTR */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23e74c3c' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23e74c3c' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center; /* LTR */
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
+html[dir="rtl"] .is-invalid {
+    padding-right: .75rem; /* Default padding */
+    padding-left: calc(1.5em + .75rem);
+    background-position: left calc(.375em + .1875rem) center;
+}
+
+.is-invalid:focus {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 0.25rem rgba(231, 76, 60, 0.25); /* Red focus shadow */
+}
+
+.invalid-feedback {
+    display: none; /* Hide by default */
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: .875em; /* 12.25px if base is 14px */
+    color: var(--danger-color);
+}
+
+/* Show feedback when input is invalid */
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+/* Checkbox/Radio/Switch validation */
+.form-check-input.is-invalid {
+    border-color: var(--danger-color);
+}
+.form-check-input.is-invalid:checked {
+    background-color: var(--danger-color); /* Make background red when checked and invalid */
+}
+.form-check-input.is-invalid:focus {
+     box-shadow: 0 0 0 0.25rem rgba(231, 76, 60, 0.25);
+}
+.form-check-input.is-invalid ~ .form-check-label {
+    color: var(--danger-color);
+}
+
+/* Need to display feedback for checkboxes differently */
+.form-check .invalid-feedback {
+    /* If positioned absolutely relative to .form-check */
+    /* position: absolute; */
+    /* bottom: -1.25rem; */
+    /* left: 1.75em; */
+    /* Or just rely on d-block helper class */
+     padding-left: 1.75em; /* Align with label LTR */
+     margin-top: 0;
+}
+html[dir="rtl"] .form-check .invalid-feedback {
+     padding-left: 0;
+     padding-right: 1.75em;
+}

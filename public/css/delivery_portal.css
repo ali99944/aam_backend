@@ -1,0 +1,113 @@
+/* public/css/delivery_portal.css */
+body.portal-body {
+    font-family: 'Cairo', sans-serif;
+    margin: 0;
+    background-color: #f9fafb; /* Lighter background */
+    color: #374151; /* Darker gray text */
+    font-size: 0.95rem;
+}
+
+.portal-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.portal-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.portal-header-brand a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #111827;
+}
+.portal-header-brand img {
+    margin-right: 0.75rem; /* LTR */
+}
+html[dir="rtl"] .portal-header-brand img { margin-right: 0; margin-left: 0.75rem; }
+.portal-header-brand span {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.portal-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1rem;
+}
+.portal-nav a {
+    text-decoration: none;
+    color: #4b5563;
+    font-weight: 500;
+    padding: 0.5rem 0.25rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.portal-nav a:hover {
+    color: #1abc9c;
+}
+.portal-nav a.active {
+    color: #1abc9c;
+    border-bottom-color: #1abc9c;
+}
+
+.portal-header-user .logout-button {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.2s;
+}
+.portal-header-user .logout-button:hover {
+    color: #ef4444; /* Red on hover */
+}
+
+.portal-content {
+    flex-grow: 1;
+    padding: 1.5rem 2rem;
+    max-width: 1200px;
+    width: 95%;
+    margin: 1.5rem auto;
+}
+
+/* Basic Alert Styles (adapt from admin.css or use framework) */
+.alert { padding: 0.8rem 1.2rem; margin-bottom: 1rem; border-radius: 0.3rem; border: 1px solid transparent; }
+.alert-success { color: #0f5132; background-color: #d1e7dd; border-color: #badbcc; }
+.alert-danger { color: #842029; background-color: #f8d7da; border-color: #f5c2c7; }
+.alert-warning { color: #664d03; background-color: #fff3cd; border-color: #ffecb5; }
+.alert-info { color: #055160; background-color: #cff4fc; border-color: #b6effb; }
+
+/* Basic Card (reuse/adapt from admin.css) */
+.card { background-color: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; background-color: #f9fafb; }
+.card-title { font-size: 1.1rem; font-weight: 600; margin: 0; }
+.card-body { padding: 1.5rem; }
+.card-footer { padding: 1rem 1.5rem; border-top: 1px solid #e5e7eb; background-color: #f9fafb; }
+
+/* Basic Table (reuse/adapt from admin.css) */
+.table-responsive { overflow-x: auto; }
+.portal-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+.portal-table th, .portal-table td { border: 1px solid #e5e7eb; padding: 0.75rem 1rem; text-align: right; vertical-align: middle; }
+.portal-table thead th { background-color: #f3f4f6; font-weight: 600; color: #374151; }
+.portal-table tbody tr:nth-child(even) { background-color: #f9fafb; }
+.portal-table tbody tr:hover { background-color: #f0f9ff; } /* Light blue hover */
+.portal-table .actions { white-space: nowrap; text-align: center;}
+
+/* Status Badges (reuse/adapt) */
+.status-badge { /* ... */ }
+.status-badge-pending { /* ... */ }
+/* ... etc ... */
