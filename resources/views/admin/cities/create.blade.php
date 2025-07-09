@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Add New City</h1>
+        <h1>اضافة مدينة جديدة</h1>
     </div>
 
     <div class="card">

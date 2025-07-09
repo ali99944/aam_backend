@@ -27,13 +27,13 @@ use App\Http\Controllers\Api\SubCategoryController;
 Route::prefix('categories')->name('api.categories.')->group(function () { // Added name prefix for potential clarity
     Route::get('/', [ApiCategoryController::class, 'index'])->name('index');                // api.categories.index
     Route::get('/{id}', [ApiCategoryController::class, 'show'])->name('show');                // api.categories.index
-    Route::get('/{id}/sub-categories', [SubCategoryController::class, 'byCategoryId'])->name('single');                // api.categories.index
 });
 
 
 // --- SubCategories API ---
 Route::prefix('sub-categories')->name('api.subcategories.')->group(function () {
     Route::get('/', [App\Http\Controllers\Api\SubCategoryController::class, 'index'])->name('index');
+    Route::get('/slug/{slug}', [App\Http\Controllers\Api\SubCategoryController::class, 'byCategorySlug'])->name('index');
 });
 // --- End SubCategories API ---
 
@@ -43,7 +43,7 @@ Route::prefix('cart')->name('api.cart.')->group(function () {
     Route::post('/', [CartController::class, 'store'])->name('store'); // Add item
     Route::put('/items/{cartItemId}', [CartController::class, 'update'])->name('update'); // Update quantity
     Route::delete('/items/{cartItemId}', [CartController::class, 'destroy'])->name('destroy'); // Remove item
-    Route::delete('/', [CartController::class, 'clear'])->name('clear'); // Clear entire cart
+    Route::post('/clear', [CartController::class, 'clear'])->name('clear'); // Clear entire cart
 
     // Route to merge guest cart after login (Requires Authentication)
     Route::post('/merge', [CartController::class, 'mergeGuestCart'])
@@ -67,6 +67,7 @@ Route::prefix('auth/customer')->name('api.customer.auth.')->group(function () {
     Route::post('/login', [CustomerAuthController::class, 'login'])->name('login');
     Route::post('/forgot-password', [CustomerAuthController::class, 'forgotPassword'])->name('forgot-password');
     Route::post('/verify-otp', [CustomerAuthController::class, 'verifyOtp'])->name('verify-otp');
+    Route::post('/send-otp', [CustomerAuthController::class, 'sendOtp'])->name('send-otp');
     Route::post('/reset-password', [CustomerAuthController::class, 'resetPassword'])->name('reset-password');
 
     // Routes requiring authentication (using the customer sanctum guard)
@@ -95,11 +96,12 @@ Route::prefix('content')->name('api.content.')->group(function () {
 
 Route::prefix('products')->name('api.products.')->group(function() {
     Route::get('/', [ProductController::class, 'index'])->name('index'); // List products
-    Route::get('/top-seller', [ProductController::class, 'topSellers'])->name('topSellers'); // List products
-    Route::get('/top-newest', [ProductController::class, 'topNewest'])->name('topNewest'); // List products
-    Route::get('/top-discounts', [ProductController::class, 'topDiscounts'])->name('topDiscounts'); // List products
-    Route::get('/featured', [ProductController::class, 'featured'])->name('featured'); // Get featured groups
     Route::get('/{id}', [ProductController::class, 'show'])->name('show'); // Get single product (by ID or SKU)
+
+     Route::get('/listings/just-arrived', [ProductController::class, 'justArrived'])->name('listings.just-arrived');
+    Route::get('/listings/featured', [ProductController::class, 'featured'])->name('listings.featured');
+    Route::get('/listings/top-discounts', [ProductController::class, 'topDiscounts'])->name('listings.top-discounts');
+    Route::get('/listings/recommended', [ProductController::class, 'recommended'])->name('listings.recommended');
 
     // Favorite Toggling (Requires Authentication)
     Route::post('/{product}/favorite', [ProductController::class, 'toggleFavorite'])
@@ -113,6 +115,8 @@ Route::get('/subcategories/{subCategoryId}/products', [ProductController::class,
 
      Route::prefix('orders')->name('api.orders.')->group(function () {
         // Submit order request (handles guest/auth)
+        Route::get('/', [OrderApiController::class, 'index'])->middleware('auth:customer')->name('index');
+        Route::get('/{id}', [OrderApiController::class, 'get'])->middleware('auth:customer')->name('get');
         Route::post('/', [OrderApiController::class, 'store'])->name('store');
         // Track order using track code (public)
         Route::get('/track/{trackCode}', [OrderApiController::class, 'showByTrackCode'])->name('show.track');
@@ -174,3 +178,8 @@ Route::prefix('policies')->name('api.policies.')->group(function() {
     Route::get('/', [PolicyController::class, 'index'])->name('index'); // List policies
     Route::get('/{policyKey}', [PolicyController::class, 'show'])->name('show'); // Get single policy by key
 });
+
+// --- Public Frontend Endpoints ---
+Route::get('/banners', [App\Http\Controllers\Api\BannerController::class, 'index'])->name('api.banners.index');
+// --- Public Frontend Endpoints ---
+Route::get('/testimonials', [App\Http\Controllers\Api\TestimonialController::class, 'index'])->name('api.testimonials.index');

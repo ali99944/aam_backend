@@ -2,7 +2,7 @@
 @section('title', 'Edit Category - AAM Store')
 @section('content')
     <div class="content-header">
-        <h1>Edit Category: {{ $category->name }}</h1>
+        <h1>تعديل القسم الرئيسي: {{ $category->name }}</h1>
     </div>
     <div class="card">
         <div class="card-body">

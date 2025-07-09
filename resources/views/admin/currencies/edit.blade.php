@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Edit Currency')
 @section('content') <div class="content-header">
-        <h1>Edit Currency: {{ $currency->name }}</h1>
+        <h1>تعديل العملة: {{ $currency->name }}</h1>
     </div>
     <div class="card">
         <div class="card-body">

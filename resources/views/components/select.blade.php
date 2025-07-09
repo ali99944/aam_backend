@@ -94,8 +94,8 @@
                         <li>
                             <button
                                 type="button"
-                                class="w-full text-right px-4 py-2 text-base hover:bg-[#D2EAE8] flex items-center justify-between"
-                                :class="{'bg-[#D2EAE8] text-[#00998F]': option.value === selectedOption?.value}"
+                                class="w-full text-right px-4 py-2 text-base hover:bg-secondary flex items-center justify-between"
+                                :class="{'bg-secondary text-primary': option.value === selectedOption?.value}"
                                 x-on:click="selectedOption = option; isOpen = false; searchTerm = ''"
                             >
                                 <template x-if="option.value === selectedOption?.value">

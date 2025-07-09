@@ -101,50 +101,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Get featured products grouped by criteria.
-     */
-    public function featured(Request $request)
-    {
-        $limit = self::FEATURED_LIMIT;
-        $baseQuery = fn() => Product::with(['brand', 'discount']) // Minimal relations for summary
-                                     ->where('is_public', true)
-                                     ->where('status', Product::STATUS_ACTIVE);
-
-        // 1. Newest Products
-        $newest = $baseQuery()->latest()->take($limit)->get();
-
-        // 2. Highest Purchased (Requires OrderItems relationship)
-        $popular = $baseQuery()
-                    ->withCount('orderItems') // Count related order items
-                    ->orderByDesc('order_items_count')
-                    ->take($limit)
-                    ->get();
-
-        // 3. Featured Flag
-        $featured = $baseQuery()
-                    ->where('is_featured', true)
-                    ->orderByDesc('updated_at') // Show recently featured first?
-                    ->take($limit)
-                    ->get();
-
-        // 4. Big Discounts (Simplified: products with any discount, ordered by creation)
-        // For % or fixed amount sorting, you'd need more complex logic or derived columns.
-        $discounted = $baseQuery()
-                        ->whereNotNull('discount_id')
-                        //->orderBy('discount_value_or_percentage', 'desc') // Need to calculate this
-                        ->latest() // Simple sort for now
-                        ->take($limit)
-                        ->get();
-
-        return response()->json([
-            'newest' => ProductSummaryResource::collection($newest),
-            'popular' => ProductSummaryResource::collection($popular),
-            'featured' => ProductSummaryResource::collection($featured),
-            'discounted' => ProductSummaryResource::collection($discounted),
-        ]);
-    }
-
-    /**
      * Get products belonging to a specific active sub-category.
      */
     public function bySubCategory(Request $request, int $subCategoryId)
@@ -177,7 +133,7 @@ class ProductController extends Controller
     public function toggleFavorite(Request $request, Product $product) // Route model binding for product
     {
         /** @var Customer $customer */
-        $customer = $request->user('customer'); // Get authenticated customer
+        $customer = $request->user(); // Get authenticated customer
 
         // Ensure product is valid to be favorited
         if (!$product->is_public /* || $product->status !== Product::STATUS_ACTIVE */) {
@@ -196,51 +152,123 @@ class ProductController extends Controller
     }
 
 
-
     /**
-     * Get the top 5 most sold products.
+     * Get a list of the most recently added products.
      */
-    public function topSellers(Request $request)
+    public function justArrived(Request $request)
     {
-        $limit = 5;
-        $products = Product::withCount('orderItems')
-                            ->orderByDesc('order_items_count')
-                            ->take($limit)
-                            ->get();
+        $products = Product::with(['brand', 'discount'])
+                           ->where('is_public', true)
+                           ->where('status', Product::STATUS_ACTIVE)
+                           ->latest() // This orders by 'created_at' descending
+                           ->get();
 
         return response()->json($products);
     }
 
     /**
-     * Get the top 5 newest products.
+     * Get a list of featured products.
      */
-    public function topNewest(Request $request)
+    public function featured(Request $request)
     {
-        $limit = 5;
         $products = Product::with(['brand', 'discount'])
-                            ->where('is_public', true)
-                            ->where('status', Product::STATUS_ACTIVE)
-                            ->orderByDesc('created_at')
-                            ->take($limit)
-                            ->get();
+                           ->where('is_public', true)
+                           ->where('status', Product::STATUS_ACTIVE)
+                           ->where('is_featured', true)
+                           ->inRandomOrder() // Or latest(), or based on a 'featured_order' column
+                           ->limit($request->input('limit', self::FEATURED_LIMIT))
+                           ->get();
 
-        return ProductSummaryResource::collection($products);
+        return response()->json($products);
     }
 
     /**
-     * Get the top 5 products with the highest discount.
+     * Get a list of products with the highest percentage discounts.
      */
-    public function topDiscounts(Request $request)
+    public function topDiscounts()
     {
-        $limit = 5;
         $products = Product::with(['brand', 'discount'])
-                            ->whereHas('discount', function($q) {
-                                $q->whereNotNull('discount_id');
-                            })
-                            ->orderByDesc('discount.value')
-                            ->take($limit)
+                            ->where('is_public', true)
+                            ->where('status', Product::STATUS_ACTIVE)
+                            // ->whereHas('discount', function($query) {
+                            //     // Ensure discount is active and is a percentage type for ranking
+                            //     $query->where('status', 'active')
+                            //           ->where('type', 'percentage');
+                            // })
+                            // // Join to order by the discount value directly
+                            // ->join('discounts', 'products.discount_id', '=', 'discounts.id')
+                            // ->orderBy('discounts.value', 'desc') // Order by highest percentage
+                            ->select('products.*') // Ensure we only select product columns after join
                             ->get();
 
-        return ProductSummaryResource::collection($products);
+        return response()->json($products);
+    }
+
+
+    /**
+     * Get a list of recommended products for the authenticated user.
+     * This requires a more complex recommendation logic.
+     * Here's a basic implementation example.
+     */
+    public function recommended(Request $request)
+    {
+        /** @var Customer|null $customer */
+        $customer = $request->user(); // Use your Sanctum guard for customers
+
+        $query = Product::with(['brand', 'discount'])
+                        ->where('is_public', true)
+                        ->where('status', Product::STATUS_ACTIVE);
+
+        if ($customer) {
+            // --- Basic Recommendation Logic ---
+            // 1. Find categories of products the user has bought or favorited recently.
+            $interestedSubCategoryIds = DB::table('orders')
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->join('products', 'order_items.product_id', '=', 'products.id')
+                ->where('orders.customer_id', $customer->id)
+                ->where('orders.created_at', '>', now()->subMonths(6)) // In the last 6 months
+                ->select('products.sub_category_id')
+                ->distinct()
+                ->pluck('sub_category_id');
+
+            // 2. Prioritize products from those categories that the user hasn't bought yet.
+            if ($interestedSubCategoryIds->isNotEmpty()) {
+                $purchasedProductIds = DB::table('order_items')
+                                         ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                                         ->where('orders.customer_id', $customer->id)
+                                         ->pluck('order_items.product_id');
+
+                $query->whereIn('sub_category_id', $interestedSubCategoryIds)
+                      ->whereNotIn('id', $purchasedProductIds)
+                      ->inRandomOrder(); // Show random products from the interested categories
+            } else {
+                // If no purchase history, fall back to showing highly-rated or featured products.
+                $query->where('is_featured', true)
+                      ->orWhere('overall_rating', '>=', 4) // Example: show popular products
+                      ->inRandomOrder();
+            }
+
+        } else {
+            // --- Guest User Recommendation ---
+            // Fallback to showing featured or best-selling/highly-rated products.
+             $query->where('is_featured', true)
+                   ->orWhere('overall_rating', '>=', 4)
+                   ->inRandomOrder();
+        }
+
+        $products = $query->get();
+
+        // Ensure we don't return an empty list if logic fails, fallback again
+        if ($products->isEmpty()) {
+            $products = Product::with(['brand', 'discount'])
+                                ->where('is_public', true)
+                                ->where('status', Product::STATUS_ACTIVE)
+                                ->where('is_featured', true)
+                                ->inRandomOrder()
+                                ->get();
+        }
+
+        // return ProductSummaryResource::collection($products);
+        return response()->json($products);
     }
 }

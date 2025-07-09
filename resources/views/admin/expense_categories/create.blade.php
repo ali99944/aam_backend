@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Add New Expense Category</h1>
+        <h1>اضافة قسم مصروفات جديد</h1>
     </div>
 
     <div class="card">

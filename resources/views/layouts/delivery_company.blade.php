@@ -11,7 +11,7 @@
 
     {{-- Include your compiled CSS (can share admin.css or create separate) --}}
     {{-- <link rel="stylesheet" href="{{ asset('app.css') }}">  --}}
-    <link rel="stylesheet" href="/public/app.css" />
+    <link rel="stylesheet" href="/app.css" />
     @stack('styles')
 </head>
 <body class="admin-body"> {{-- Use same base class? --}}

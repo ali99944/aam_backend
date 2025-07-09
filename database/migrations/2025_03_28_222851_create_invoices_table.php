@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->decimal('delivery_fee', 10, 2);
             $table->decimal('total_amount', 10, 2);
             $table->enum('status', ['draft', 'sent', 'paid', 'partially_paid', 'overdue', 'void'])->default('draft');
+            $table->string('pdf_path')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
         });

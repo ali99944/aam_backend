@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SubCategoryResource;
+use App\Models\Category;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
@@ -34,10 +35,16 @@ class SubCategoryController extends Controller
     /**
      * Get subcategories for a given category ID.
      */
-    public function byCategoryId(int $categoryId)
+    public function byCategorySlug($slug)
     {
+        $category = Category::where('slug', $slug)->first();
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found.'], 404);
+        }
+
         $subCategories = SubCategory::with('category')
-                                    ->where('category_id', $categoryId)
+                                    ->where('category_id', $category->id)
                                     ->where('is_active', true) // Only active sub-cats
                                     ->orderBy('name')
                                     ->get();

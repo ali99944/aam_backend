@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Edit Brand: <span class="text-primary">{{ $brand->name }}</span></h1>
+        <h1>تعديل العلامة التجارية: <span class="text-primary">{{ $brand->name }}</span></h1>
     </div>
 
     <div class="card">

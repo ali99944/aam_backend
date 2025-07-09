@@ -25,6 +25,7 @@ return new class extends Migration
             $table->index('status');
             $table->index('is_banned');
             $table->string('password');
+            $table->decimal('balance', 10, 2)->default(0.00);
             $table->rememberToken();
             $table->timestamps();
         });

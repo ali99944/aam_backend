@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Edit Product: <span class="text-primary">{{ $product->name }}</span></h1>
+        <h1>تعديل المنتج: <span class="text-primary">{{ $product->name }}</span></h1>
         {{-- Show SKU --}}
         <span class="badge bg-light text-dark border">SKU: {{ $product->sku_code ?? 'N/A' }}</span>
     </div>

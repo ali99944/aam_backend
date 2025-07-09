@@ -28,15 +28,15 @@ body {
 }
 
 .sidebar-link {
-    @apply flex items-center gap-2 px-4 py-2 text-gray-600 rounded-sm hover:bg-[#00998F]/10 hover:text-[#00998F] transition-colors;
+    @apply flex items-center gap-2 px-4 py-2 text-gray-600 rounded-sm hover:bg-primary/10 hover:text-primary transition-colors;
 }
 
 .sidebar-link.active {
-    @apply bg-[#00998F]/10 text-[#00998F] font-medium;
+    @apply bg-primary/10 text-primary font-medium;
 }
 
 .btn-primary {
-    @apply bg-[#00998F] text-white px-4 py-2 rounded-sm hover:bg-[#00998F]/90 transition-all;
+    @apply bg-primary text-white px-4 py-2 rounded-sm hover:bg-primary/90 transition-all;
 }
 
 .btn-secondary {
@@ -44,7 +44,7 @@ body {
 }
 
 .btn-outline {
-    @apply border border-[#00998F] text-[#00998F] px-4 py-2 rounded-sm hover:bg-[#00998F]/10 transition-all;
+    @apply border border-primary text-primary px-4 py-2 rounded-sm hover:bg-primary/10 transition-all;
 }
 
 .btn-danger {
@@ -56,7 +56,7 @@ body {
 }
 
 .form-input {
-    @apply w-full border border-gray-300 rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#00998F] focus:border-[#00998F];
+    @apply w-full border border-gray-300 rounded-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary;
 }
 
 .form-label {

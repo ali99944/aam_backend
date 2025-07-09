@@ -104,6 +104,10 @@ h3 { font-size: 1.25rem; }
     margin-top: auto; /* Stick to bottom */
 }
 
+.card {
+    box-shadow: none;
+}
+
 /* --- Sidebar --- */
 .admin-sidebar {
     width: var(--sidebar-width);
@@ -229,7 +233,7 @@ h3 { font-size: 1.25rem; }
 .sidebar-footer .logout-link {
     display: flex;
     align-items: center;
-    color: var(--sidebar-link-color);
+    color: var(--danger-color);
     text-decoration: none;
     opacity: 1;
      transition: opacity 0.2s ease 0.1s;
@@ -695,9 +699,9 @@ html[dir="rtl"] .admin-table td {
 .admin-form select:focus,
 .admin-form textarea:focus {
     border-color: var(--primary-color);
-    border: none;
+    /* border: none; */
     outline: 0;
-    box-shadow: 0 0 0 0.1rem rgba(36, 119, 174, 0.25);
+    /* box-shadow: 0 0 0 0.1rem rgba(36, 119, 174, 0.25); */
 }
 .admin-form select {
     appearance: none; /* Custom select arrow maybe? */
@@ -759,7 +763,7 @@ html[dir="rtl"] .admin-form select {
     white-space: nowrap; /* Prevent wrapping */
 }
 .btn:hover { text-decoration: none; }
-.btn:focus { outline: 0; box-shadow: 0 0 0 0.2rem rgba(var(--bs-btn-focus-shadow-rgb), .5); } /* Adapt focus */
+/* .btn:focus { outline: 0; box-shadow: 0 0 0 0.2rem rgba(var(--bs-btn-focus-shadow-rgb), .5); } */
 
 /* Sizes */
 .btn-sm { padding: 5px 10px; font-size: 0.8em; }
@@ -980,3 +984,93 @@ html[dir="rtl"] .text-left { text-align: right; }
       .btn-sm { font-size: 0.75em; padding: 4px 8px; }
 }
 
+
+/* --- Plain JS Modal Styles --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1050; /* Ensure it's above other content */
+    align-items: center; /* Use flex/grid for centering */
+    justify-content: center;
+    padding: 15px; /* Padding for smaller screens */
+}
+
+.modal-overlay.active {
+    display: flex; /* Use flex to enable centering */
+    opacity: 1;
+}
+
+/* Adapt Bootstrap's modal structure slightly */
+.modal-container { /* Replaces .modal-dialog */
+    background-color: #fff;
+    border-radius: var(--border-radius, 5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px; /* Default width */
+    width: 100%;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1051;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 40px); /* Limit height and allow scrolling */
+}
+
+.modal-overlay.active .modal-container {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid var(--border-color, #dee2e6);
+    border-top-left-radius: calc(var(--border-radius, 5px) - 1px);
+    border-top-right-radius: calc(var(--border-radius, 5px) - 1px);
+}
+.modal-header h5 { /* Target the h5 directly */
+    margin-bottom: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.modal-close-btn { /* Style the close button */
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    opacity: 0.5;
+    padding: 0.5rem;
+    margin: -0.5rem -0.5rem -0.5rem auto; /* Align right */
+    cursor: pointer;
+}
+.modal-close-btn:hover { opacity: 0.8; }
+
+.modal-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+    overflow-y: auto; /* Allow body scrolling if content exceeds max-height */
+}
+
+.modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; /* Vertically center */
+    justify-content: flex-end; /* Align buttons to the right */
+    padding: 0.75rem;
+    border-top: 1px solid var(--border-color, #dee2e6);
+    border-bottom-right-radius: calc(var(--border-radius, 5px) - 1px);
+    border-bottom-left-radius: calc(var(--border-radius, 5px) - 1px);
+}
+.modal-footer > * { /* Spacing for buttons */
+    margin: 0.25rem;
+}

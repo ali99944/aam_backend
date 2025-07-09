@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('delivery_fees', function (Blueprint $table) {
             $table->id();
             // Unique link to the city. One fee setting per city.
-            $table->foreignIdFor(City::class)->unique()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(City::class)->unique();
             $table->decimal('amount', 8, 2); // The delivery fee amount
             $table->string('estimated_delivery_time')->nullable(); // e.g., "1-2 days", "Same day if ordered before 12 PM"
             $table->boolean('is_active')->default(true); // Easily enable/disable fee for a city

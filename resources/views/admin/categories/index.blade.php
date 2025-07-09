@@ -4,10 +4,10 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Manage Categories</h1>
+        <h1>الاقسام الرئيسية</h1>
         <div class="actions">
             <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
-                <x-lucide-plus class="icon-sm mr-2"/> Add New Category
+                <x-lucide-plus class="icon-sm mr-2"/> اضافة قسم جديد
             </a>
         </div>
     </div>
@@ -31,17 +31,17 @@
 
 
     <div class="card">
-        <div class="card-body p-0"> {{-- Remove padding if table takes full width --}}
+        <div class="card-body p-0" style="box-shadow: none"> {{-- Remove padding if table takes full width --}}
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Icon</th> {{-- Added --}}
-                            <th>Cover</th> {{-- Added --}}
-                            <th>Name</th>
-                            <th>Active</th>
-                            <th>Actions</th>
+                            <th>الايقونة</th> {{-- Added --}}
+                            <th>الغلاف</th> {{-- Added --}}
+                            <th>الاسم</th>
+                            <th>الحالة</th>
+                            <th>الاجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,9 +67,9 @@
                                 {{-- <td>{{ Str::limit($category->description, 50) }}</td> --}}
                                 <td>
                                     @if ($category->is_active)
-                                        <span class="badge status-approved">Yes</span>
+                                        <span class="badge status-approved">مفعل</span>
                                     @else
-                                        <span class="badge status-pending">No</span>
+                                        <span class="badge status-pending">غير مفعل</span>
                                     @endif
                                 </td>
                                 {{-- Created At removed for brevity --}}

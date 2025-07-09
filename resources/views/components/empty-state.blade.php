@@ -4,11 +4,11 @@
             {{ $illustration }}
         </div>
     @elseif($icon)
-        <div class="text-[#00998F] bg-[#D2EAE8] mb-4 flex items-center justify-center w-20 h-20 rounded-full">
+        <div class="text-primary bg-secondary mb-4 flex items-center justify-center w-20 h-20 rounded-full">
             <x-dynamic-component :component="$icon" class="w-12 h-12" />
         </div>
     @else
-        <div class="text-[#00998F] bg-[#D2EAE8] mb-4 flex items-center justify-center w-20 h-20 rounded-full">
+        <div class="text-primary bg-secondary mb-4 flex items-center justify-center w-20 h-20 rounded-full">
             <x-dynamic-component :component="$defaultIcon" class="w-12 h-12" />
         </div>
     @endif

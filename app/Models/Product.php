@@ -27,7 +27,8 @@ class Product extends Model
         'discount_id',
         'status',
         'is_public',
-        'overall_rating'
+        'overall_rating',
+        'barcode' // Added barcode
         // Non-fillable by mass assignment: total_views, favorites_views, favorites_count, overall_rating (managed internally)
     ];
 

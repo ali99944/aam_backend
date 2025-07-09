@@ -16,10 +16,13 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Order::class);
-            $table->foreignIdFor(Product::class);
+            $table->foreignIdFor(Product::class)->nullable()->constrained()->onDelete('set null'); // Allow product deletion
+
+            
+            $table->string('product_name');     // ADDED: Snapshot of the name
+            $table->string('product_sku')->nullable(); // ADDED: Snapshot of the SKU
             $table->integer('quantity');
-            $table->double('price');
-            $table->double('total');
+            $table->decimal('price', 10, 2);    // Price at time of purchase
             $table->timestamps();
         });
     }

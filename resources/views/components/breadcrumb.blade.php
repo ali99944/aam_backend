@@ -12,7 +12,7 @@
                     @if(!$isLast)
                         <a
                             href="{{ $item['href'] }}"
-                            class="text-sm text-gray-600 hover:text-[#00998F] flex items-center gap-1"
+                            class="text-sm text-gray-600 hover:text-primary flex items-center gap-1"
                         >
                             @if($icon && $iconPosition === 'left')
                                 <x-dynamic-component :component="$icon" class="w-4 h-4 text-gray-500" />

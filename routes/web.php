@@ -1,15 +1,40 @@
 <?php
 
+use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\DeliveryCompanyLoginController;
+use App\Http\Middleware\AuthenticateAdmin;
 use Illuminate\Support\Facades\Route;
 
 
 
+// Login Routes
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('login', [LoginController::class, 'login']);
+Route::post('logout', [LoginController::class, 'logout'])->name('admin.logout');
 
-
+// Route::middleware([AuthenticateAdmin::class])->prefix('admin')->name('admin.')->group(function () {
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('frontend/banners')->name('banners.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\BannerController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\BannerController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\BannerController::class, 'store'])->name('store');
+        Route::get('/{banner}/edit', [App\Http\Controllers\Admin\BannerController::class, 'edit'])->name('edit');
+        Route::put('/{banner}', [App\Http\Controllers\Admin\BannerController::class, 'update'])->name('update');
+        Route::delete('/{banner}', [App\Http\Controllers\Admin\BannerController::class, 'destroy'])->name('destroy');
+    });
+
+    // --- Testimonials Management ---
+    Route::prefix('frontend/testimonials')->name('testimonials.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\TestimonialController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\TestimonialController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\TestimonialController::class, 'store'])->name('store');
+        Route::get('/{testimonial}/edit', [App\Http\Controllers\Admin\TestimonialController::class, 'edit'])->name('edit');
+        Route::put('/{testimonial}', [App\Http\Controllers\Admin\TestimonialController::class, 'update'])->name('update');
+        Route::delete('/{testimonial}', [App\Http\Controllers\Admin\TestimonialController::class, 'destroy'])->name('destroy');
+    });
 
     Route::resource('categories', App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('subcategories', App\Http\Controllers\Admin\SubCategoryController::class);
@@ -101,18 +126,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{expense}', [App\Http\Controllers\Admin\ExpenseController::class, 'update'])->name('update');
         Route::delete('/{expense}', [App\Http\Controllers\Admin\ExpenseController::class, 'destroy'])->name('destroy');
     });
+    // --- Customer Management ---
+    Route::prefix('customers')->name('customers.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\CustomerController::class, 'create'])->name('create');
+        Route::get('/{id}', [App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('show'); // View Details
+        Route::delete('/{customer}', [App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('destroy');
+        Route::post('/{customer}/ban', [App\Http\Controllers\Admin\CustomerController::class, 'ban'])->name('ban');
+        Route::post('/{customer}/unban', [App\Http\Controllers\Admin\CustomerController::class, 'unban'])->name('unban');
+        // Optional Edit routes
+        Route::get('/{customer}/edit', [App\Http\Controllers\Admin\CustomerController::class, 'edit'])->name('edit');
+        Route::put('/{customer}', [App\Http\Controllers\Admin\CustomerController::class, 'update'])->name('update');
 
-        // --- Customer Management ---
-        Route::prefix('customers')->name('customers.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('index');
-            // Route::get('/{customer}', [App\Http\Controllers\Admin\CustomerController::class, 'show'])->name('show'); // Optional show view
-            Route::delete('/{customer}', [App\Http\Controllers\Admin\CustomerController::class, 'destroy'])->name('destroy');
-            Route::post('/{customer}/ban', [App\Http\Controllers\Admin\CustomerController::class, 'ban'])->name('ban');
-            Route::post('/{customer}/unban', [App\Http\Controllers\Admin\CustomerController::class, 'unban'])->name('unban');
-            // Add routes for edit/update if you allow admins to edit customer details
-            // Route::get('/{customer}/edit', [App\Http\Controllers\Admin\CustomerController::class, 'edit'])->name('edit');
-            // Route::put('/{customer}', [App\Http\Controllers\Admin\CustomerController::class, 'update'])->name('update');
-        });
+        Route::post('/', [App\Http\Controllers\Admin\CustomerController::class, 'store'])->name('store');
+    });
+    // --- End Customer Management ---
 
         Route::prefix('logistics/delivery-companies')->name('delivery-companies.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\DeliveryCompanyController::class, 'index'])->name('index');
@@ -217,13 +245,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/{paymentMethod}', [App\Http\Controllers\Admin\PaymentMethodController::class, 'destroy'])->name('destroy');
         });
 
-        Route::prefix('orders')->name('orders.')->group(function () {
-            Route::get('/', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
-            Route::get('/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
-            Route::put('/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('update-status'); // Specific route for status update
-            Route::delete('/{order}', [App\Http\Controllers\Admin\OrderController::class, 'destroy'])->name('destroy');
-            // Add routes for creating/updating payments, deliveries, invoices related to an order if needed
-        });
+    // --- Order Management ---
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('index');
+        Route::get('/create', [App\Http\Controllers\Admin\OrderController::class, 'create'])->name('create');
+        Route::post('/', [App\Http\Controllers\Admin\OrderController::class, 'store'])->name('store');
+        Route::get('/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('show');
+        Route::get('/{order}/edit', [App\Http\Controllers\Admin\OrderController::class, 'edit'])->name('edit');
+        Route::put('/{order}', [App\Http\Controllers\Admin\OrderController::class, 'update'])->name('update');
+        Route::delete('/{order}', [App\Http\Controllers\Admin\OrderController::class, 'destroy'])->name('destroy');
+        Route::get('/{order}/invoice', [App\Http\Controllers\Admin\OrderController::class, 'invoice'])->name('invoice'); // Route for invoice view
+    });
+    // --- End Order Management ---
 
         Route::prefix('templates')->name('templates.')->group(function () {
             Route::get('/', [App\Http\Controllers\Admin\TemplateController::class, 'index'])->name('index');
@@ -293,3 +326,57 @@ Route::prefix('delivery-company')->name('delivery-company.')->group(function () 
     })->name('dashboard');
 
 });
+
+
+// --- Frontend Banners Management ---
+Route::get('/test-invoice', function () { // Changed route to avoid conflict
+        $invoice = new \stdClass();
+
+        $invoice->invoice_number = 'INV-2023-DUMMY-AR';
+        $invoice->invoice_date = \Carbon\Carbon::now();
+        $invoice->status = 'paid'; // 'paid', 'sent', 'draft', 'overdue'
+        $invoice->subtotal = 1250.00;
+        $invoice->delivery_fee = 50.00;
+        $invoice->discount_amount = 100.00;
+        $invoice->total_amount = 1200.00;
+
+        $invoice->order = new \stdClass();
+        $invoice->order->track_code = 'AAM-TEST54321';
+        $invoice->order->customer_name = 'علي طارق';
+        $invoice->order->customer_email = 'ali.tarek@example.com';
+        $invoice->order->customer_phone = '٠٥٥١٢٣٤٥٦٧'; // Arabic numerals
+        $invoice->order->address_line_1 = '١٢٣ شارع الملك عبد العزيز';
+        $invoice->order->address_line_2 = 'شقة ٤ ب';
+
+        $invoice->order->city = new \stdClass();
+        $invoice->order->city->name = 'الرياض، المملكة العربية السعودية';
+
+        $paymentMethod = new \stdClass();
+        $paymentMethod->name = 'الدفع عند الاستلام';
+        $payment = new \stdClass();
+        $payment->paymentMethod = $paymentMethod;
+        $invoice->order->payments = collect([$payment]);
+
+        $item1 = new \stdClass();
+        $item1->product_name = 'قميص قطن عالي الجودة';
+        $item1->product_sku = 'SKU-TSHIRT-01';
+        $item1->quantity = 2;
+        $item1->price = 250.00;
+
+        $item2 = new \stdClass();
+        $item2->product_name = 'قبعة بيسبول أنيقة';
+        $item2->product_sku = 'SKU-CAP-03';
+        $item2->quantity = 1;
+        $item2->price = 150.00;
+
+        $item3 = new \stdClass();
+        $item3->product_name = 'منتج آخر رائع';
+        $item3->product_sku = 'SKU-MISC-11';
+        $item3->quantity = 3;
+        $item3->price = 200.00;
+
+        $invoice->order->items = collect([$item1, $item2, $item3]);
+
+        // Use a new view file for the Arabic version
+        return view('admin.orders.invoice', ['invoice' => $invoice]);
+    });

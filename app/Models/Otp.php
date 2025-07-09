@@ -27,6 +27,6 @@ class Otp extends Model
      */
     public function isValid(): bool
     {
-        return !$this->verified_at && $this->expires_at && $this->expires_at->isFuture();
+        return $this->verified_at && $this->expires_at && $this->expires_at->isFuture();
     }
 }

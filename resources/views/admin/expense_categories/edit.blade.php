@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Edit Expense Category: <span class="text-primary">{{ $expenseCategory->name }}</span></h1>
+        <h1>تعديل قسم مصروفات: <span class="text-primary">{{ $expenseCategory->name }}</span></h1>
     </div>
 
     <div class="card">

@@ -32,8 +32,4 @@ class SupportTicket extends Model
     public function customer(): BelongsTo { return $this->belongsTo(Customer::class)->withDefault(['name' => 'Deleted Customer']); }
     public function assignedAdmin(): BelongsTo { return $this->belongsTo(User::class, 'assigned_admin_id')->withDefault(['name' => 'Unassigned']); }
     public function replies(): HasMany { return $this->hasMany(SupportTicketReply::class)->orderBy('created_at'); }
-
-    // Accessors for labels
-    public function getStatusLabelAttribute(): string { /* Return label based on status */ }
-    public function getPriorityLabelAttribute(): string { /* Return label based on priority */ }
 }

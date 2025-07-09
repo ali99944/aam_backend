@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Add New Brand</h1>
+        <h1>اضافة علامة تجارية جديدة</h1>
     </div>
 
     <div class="card">

@@ -2,7 +2,7 @@
 @section('title', 'Add New Category - AAM Store')
 @section('content')
     <div class="content-header">
-        <h1>Add New Category</h1>
+        <h1>اضافة قسم جديد</h1>
     </div>
     <div class="card">
         <div class="card-body">

@@ -26,92 +26,64 @@ class CategorySeeder extends Seeder
                 'description' => 'جميع مستلزمات وأدوات السباكة للمنزل والمشاريع.',
                 'is_active' => true,
                 'total_sub_categories' => 5, // We will create 5 sub-categories
-                'cover_image' => 'images/categories/covers/plumbing_cover.jpg', // Placeholder
-                'icon_image' => 'images/categories/icons/plumbing.svg', // Placeholder
-                'is_featured' => true, // Set this category as featured
+                'image' => 'https://img.freepik.com/premium-vector/construction-repair-work-tools-vector-icons_8071-27164.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740', // Placeholder
+                'is_featured' => true,
+                'slug' => 'plumbing',
             ],
             [
                 'name' => 'إضاءة', // Lighting
                 'description' => 'حلول إضاءة داخلية وخارجية، لمبات ومستلزماتها.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/lighting_cover.jpg',
-                'icon_image' => 'images/categories/icons/lighting.svg',
+                'image' => 'https://img.freepik.com/premium-photo/close-up-lighting-equipments-against-white-background_1048944-10574142.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => true,
+                'slug' => 'lighting',
             ],
             [
                 'name' => 'عدد كهربائية', // Electrical Tools
                 'description' => 'أدوات ومعدات كهربائية متنوعة للحرفيين والهواة.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/electrical_tools_cover.jpg',
-                'icon_image' => 'images/categories/icons/electrical_tools.svg',
+                'image' => 'https://img.freepik.com/free-photo/different-electrical-tools-wooden-background-flat-lay_169016-24825.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => true,
+                'slug' => 'electrical-tools',
             ],
             [
                 'name' => 'مواد بناء', // Building Materials
                 'description' => 'مواد أساسية للإنشاءات والتشطيبات.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/building_materials_cover.jpg',
-                'icon_image' => 'images/categories/icons/building_materials.svg',
+                'image' => 'https://img.freepik.com/premium-photo/house-arrangement-from-yellow-repair-tools-top-view_23-2148393070.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => true,
+                'slug' => 'building-materials',
             ],
             [
                 'name' => 'مواد زراعية', // Agricultural Materials
                 'description' => 'مستلزمات الزراعة المنزلية والحدائق والبساتين.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/agricultural_cover.jpg',
-                'icon_image' => 'images/categories/icons/agricultural.svg',
+                'image' => 'https://img.freepik.com/free-photo/tidy-gardening-elements_23-2147997158.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => true,
+                'slug' => 'agricultural-materials',
             ],
             [
                 'name' => 'ديكورات', // Decorations
                 'description' => 'ديكورات منزلية، مستلزمات وملحقات.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/decorations_cover.jpg',
-                'icon_image' => 'images/categories/icons/decorations.svg',
+                'image' => 'https://img.freepik.com/free-photo/arrangement-repair-utensils-paint-brush_23-2148393105.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => false,
+                'slug' => 'decorations',
             ],
             [
                 'name' => 'أدوات ميكانيكية', // Mechanical Tools
                 'description' => 'أدوات ومعدات ميكانيكية متنوعة.',
                 'is_active' => true,
                 'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/mechanical_tools_cover.jpg',
-                'icon_image' => 'images/categories/icons/mechanical_tools.svg',
+                'image' => 'https://img.freepik.com/free-photo/top-view-mechanical-tools-arrangement_23-2149552380.jpg?uid=R160151452&ga=GA1.1.963014397.1747021839&semt=ais_hybrid&w=740',
                 'is_featured' => false,
+                'slug' => 'mechanical-tools',
             ],
-            [
-                'name' => 'أدوات حرفية', // Hand Tools
-                'description' => 'أدوات يدويّة متنوعة للحرفيين.',
-                'is_active' => true,
-                'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/hand_tools_cover.jpg',
-                'icon_image' => 'images/categories/icons/hand_tools.svg',
-                'is_featured' => false,
-            ],
-            [
-                'name' => 'أدوات كهربائية', // Electrical Tools
-                'description' => 'أدوات كهربائية متنوعة للحرفيين.',
-                'is_active' => true,
-                'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/electrical_tools_cover.jpg',
-                'icon_image' => 'images/categories/icons/electrical_tools.svg',
-                'is_featured' => false,
-            ],
-            [
-                'name' => 'أدوات بلاستيكية', // Plastic Tools
-                'description' => 'أدوات بلاستيكية متنوعة للحرفيين.',
-                'is_active' => true,
-                'total_sub_categories' => 5,
-                'cover_image' => 'images/categories/covers/plastic_tools_cover.jpg',
-                'icon_image' => 'images/categories/icons/plastic_tools.svg',
-                'is_featured' => false,
-            ],
-            // Add more categories if needed following the same structure
         ];
 
         foreach ($categories as $categoryData) {

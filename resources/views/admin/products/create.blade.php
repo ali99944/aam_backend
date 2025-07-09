@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Add New Product</h1>
+        <h1>اضافة منتج جديد</h1>
     </div>
 
      {{-- Add enctype for file uploads --}}

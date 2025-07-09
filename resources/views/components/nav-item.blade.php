@@ -6,8 +6,8 @@
         @if($hasChildren) @click.prevent="open = !open" @endif
         class="flex items-center justify-between px-4 py-3 text-sm font-medium transition-colors rounded-sm"
         :class="{
-            'bg-[#D2EAE8] text-[#00998F]': {{ $active ? 'true' : 'false' }} || open,
-            'text-gray-600 hover:bg-gray-100 hover:text-[#00998F]': !{{ $active ? 'true' : 'false' }} && !open
+            'bg-secondary text-primary': {{ $active ? 'true' : 'false' }} || open,
+            'text-gray-600 hover:bg-gray-100 hover:text-primary': !{{ $active ? 'true' : 'false' }} && !open
         }"
     >
         <div class="flex items-center space-x-3">

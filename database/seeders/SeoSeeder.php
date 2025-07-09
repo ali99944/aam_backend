@@ -93,49 +93,6 @@ class SeoSeeder extends Seeder
                 'custom_meta_tags' => null,
             ],
 
-            // --- Product Related Pages ---
-            [
-                'name' => 'Products Listing (General)',
-                'key' => 'products_index',
-                'type' => 'page',
-                'title' => "جميع المنتجات | {$siteName}",
-                'description' => "تصفح وشراء مجموعة واسعة من المنتجات بما في ذلك العدد الكهربائية، مواد البناء، السباكة، والمزيد.",
-                'keywords' => "منتجات, تسوق, شراء, عدد, مواد بناء, سباكة, زراعة, {$siteName}",
-                'robots_meta' => 'index, follow',
-                'canonical_url' => $baseUrl . '/products', // Adjust URL path
-                'og_title' => "اكتشف منتجاتنا المتنوعة | {$siteName}",
-                'og_description' => "الجودة والتنوع في متناول يدك. تسوق الآن!",
-                'og_image' => $defaultOgImage,
-                'og_image_alt' => "Product Catalog",
-                'og_locale' => $defaultLocale,
-                'og_site_name' => $siteName,
-                'twitter_title' => "تصفح منتجات {$siteName}",
-                'twitter_description' => "كل ما تحتاجه من عدد ومواد بناء وسباكة.",
-                'twitter_image' => $defaultTwitterImage,
-                'twitter_alt' => "Product Catalog",
-                'custom_meta_tags' => null,
-            ],
-             [ // Example for a specific Category page (you might generate these dynamically later)
-                'name' => 'Categories Listing (General)',
-                'key' => 'categories_index',
-                'type' => 'page',
-                'title' => "فئات المنتجات | {$siteName}",
-                'description' => "استكشف فئات المنتجات المتنوعة لدينا، من السباكة والإضاءة إلى مواد البناء والعدد.",
-                'keywords' => "فئات, أقسام, منتجات, سباكة, كهرباء, بناء, {$siteName}",
-                'robots_meta' => 'index, follow',
-                'canonical_url' => $baseUrl . '/categories', // Adjust URL path
-                'og_title' => "فئات منتجات {$siteName}",
-                'og_description' => "تصفح حسب الفئة للعثور على ما تحتاجه بسهولة.",
-                'og_image' => $defaultOgImage,
-                'og_image_alt' => "Product Categories",
-                'og_locale' => $defaultLocale,
-                'og_site_name' => $siteName,
-                'twitter_title' => "فئات منتجات {$siteName}",
-                'twitter_description' => "تسوق بسهولة حسب القسم.",
-                'twitter_image' => $defaultTwitterImage,
-                'twitter_alt' => "Product Categories",
-                'custom_meta_tags' => null,
-            ],
 
             // --- Functional Pages ---
             [

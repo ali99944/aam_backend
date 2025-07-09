@@ -3,8 +3,8 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Edit SEO Settings for: <span class="text-primary">{{ $seo->name }}</span></h1>
-        <span class="badge bg-light text-dark border">Page Key: {{ $seo->key }}</span>
+        <h1>تعديل محركات البحث ل: <span class="text-primary">{{ $seo->name }}</span></h1>
+        <span class="badge bg-light text-dark border">كود الصفحة: {{ $seo->key }}</span>
     </div>
 
      <form method="POST" action="{{ route('admin.seo.update', $seo->id) }}" class="admin-form" enctype="multipart/form-data">

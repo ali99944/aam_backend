@@ -17,16 +17,13 @@ class CityApiController extends Controller
      */
     public function index(Request $request)
     {
-        // Fetch active cities, ordered by name
-        // Add filters if needed (e.g., by country_id if applicable)
-        // $countryId = config('app.default_country_id'); // Example: Get default country ID
-        $query = City::query();
-                        // ->where('is_active', true) // Assuming City has an active flag
+        $query = City::query()
+                        ->where('is_active', true); // Assuming City has an active flag
                         // ->where('country_id', $countryId)
 
         // Allow searching if needed for dynamic dropdowns
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', "%{$request->search}%");
         }
 
         $cities = $query->orderBy('name')->get();
@@ -34,5 +31,4 @@ class CityApiController extends Controller
         return response()->json($cities);
     }
 
-    // Other methods (show, store, update, destroy) are likely not needed for public API
 }

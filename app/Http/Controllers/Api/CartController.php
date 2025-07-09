@@ -20,7 +20,7 @@ class CartController extends Controller
         $guestToken = $request->header('X-Cart-Token');
 
         // Check for authenticated customer first (assuming Sanctum)
-        $customer = $request->bearerToken() ? $request->user('customer') : null; // Use your Sanctum guard name for customers
+        $customer = $request->bearerToken() ? $request->user() : null; // Use your Sanctum guard name for customers
 
         return ['customer' => $customer, 'guestToken' => $guestToken];
     }
@@ -227,7 +227,7 @@ class CartController extends Controller
      public function mergeGuestCart(Request $request)
      {
          // Customer MUST be authenticated here
-         $customer = $request->user('customer');
+         $customer = $request->user();
          if (!$customer) {
              return response()->json(['message' => 'Unauthenticated.'], 401);
          }

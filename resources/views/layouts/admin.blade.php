@@ -5,7 +5,7 @@
     $currentLang = session('locale', config('app.locale', 'ar')); // Default to Arabic
     $direction = ($currentLang == 'ar') ? 'rtl' : 'ltr';
 @endphp
-<html lang="{{ str_replace('_', '-', $currentLang) }}" dir="{{ $direction }}">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +22,7 @@
 
     {{-- Main Admin CSS --}}
     {{-- <link rel="stylesheet" href="{{ asset('app.css') }}"> --}}
-    <link rel="stylesheet" href="/public/app.css" />
+    <link rel="stylesheet" href="/app.css" />
 
     {{-- Add page-specific CSS if needed --}}
     @stack('styles')

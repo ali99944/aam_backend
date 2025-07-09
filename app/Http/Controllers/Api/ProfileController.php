@@ -31,7 +31,7 @@ class ProfileController extends Controller
     public function show(Request $request)
     {
         /** @var Customer $customer */
-        $customer = $request->user('customer'); // Use your customer guard
+        $customer = $request->user(); // Use your customer guard
 
         if (!$customer) {
              return response()->json(['message' => 'Unauthenticated.'], 401);
@@ -50,7 +50,7 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
-        $customer = Auth::guard('customer')->user();
+        $customer = $request->user();
 
 
         if (!$customer) {
@@ -125,7 +125,7 @@ class ProfileController extends Controller
     public function changePassword(Request $request)
     {
         /** @var Customer $customer */
-        $customer = $request->user('customer');
+        $customer = $request->user();
 
         if (!$customer) {
              return response()->json(['message' => 'Unauthenticated.'], 401);

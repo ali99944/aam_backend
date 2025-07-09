@@ -1,43 +1,81 @@
 @extends('layouts.admin')
-@section('title', 'Manage Customers')
+@section('title', 'إدارة العملاء')
 
 @push('styles')
 <style>
+/* Status badge styles */
 .status-badge { font-size: 0.8em; padding: 3px 8px; border-radius: 5px; font-weight: 500;}
-.status-badge-active { background-color: #d1e7dd; color: #0f5132; }
-.status-badge-banned { background-color: #f8d7da; color: #842029; }
-.status-badge-verification-required { background-color: #fff3cd; color: #664d03; border: 1px solid #ffeeba;}
+.status-badge-active { background-color: #d1e7dd; color: #0f5132; } /* فعال */
+.status-badge-banned { background-color: #f8d7da; color: #842029; } /* محظور */
+.status-badge-verification-required { background-color: #fff3cd; color: #664d03; border: 1px solid #ffeeba;} /* بانتظار التحقق */
 .verification-icon { vertical-align: middle; }
 .ban-info { font-size: 0.85em; color: #6c757d; }
 .modal-body .form-label { font-weight: 500; }
+
+/* Plain JS Modal CSS (from previous response) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); display: none; opacity: 0;
+    transition: opacity 0.3s ease; z-index: 1050; align-items: center;
+    justify-content: center; padding: 15px;
+}
+.modal-overlay.active { display: flex; opacity: 1; }
+.modal-container {
+    background-color: #fff; border-radius: 5px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-width: 500px; width: 100%; opacity: 0; transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease; z-index: 1051;
+    display: flex; flex-direction: column; max-height: calc(100vh - 40px);
+}
+.modal-overlay.active .modal-container { opacity: 1; transform: translateY(0); }
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1rem; border-bottom: 1px solid #dee2e6;
+}
+.modal-header h5 { margin-bottom: 0; font-size: 1.25rem; font-weight: 500; }
+.modal-close-btn {
+    background: transparent; border: none; font-size: 1.5rem; line-height: 1;
+    opacity: 0.5; padding: 0.5rem; margin: -0.5rem -0.5rem -0.5rem auto; cursor: pointer;
+}
+html[dir="rtl"] .modal-close-btn { margin: -0.5rem auto -0.5rem -0.5rem; } /* Adjust close button for RTL modal */
+.modal-close-btn:hover { opacity: 0.8; }
+.modal-body { position: relative; flex: 1 1 auto; padding: 1rem; overflow-y: auto; }
+.modal-footer {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+    padding: 0.75rem; border-top: 1px solid #dee2e6;
+}
+html[dir="rtl"] .modal-footer { justify-content: flex-start; } /* Align footer buttons left in RTL */
+.modal-footer > * { margin: 0.25rem; }
+
+/* RTL Adjustments for form-inline & icons if not globally handled */
+html[dir="rtl"] .form-inline .form-group.mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+html[dir="rtl"] .form-inline label.mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .form-inline .btn-link.ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+html[dir="rtl"] .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .ms-1 { margin-left: 0 !important; margin-right: 0.25rem !important; } /* For icon on right */
+.ws-nowrap { white-space: nowrap; }
 </style>
 @endpush
 
 @section('content')
     <div class="content-header">
-        <h1>Manage Customers</h1>
-        {{-- Optional: Add "Add Customer" button if admin can create customers --}}
-        {{-- <div class="actions">
-            <a href="#" class="btn btn-primary">
-                <x-lucide-plus class="icon-sm mr-2"/> Add New Customer
-            </a>
-        </div> --}}
+        <h1>إدارة العملاء</h1>
+        {{-- Optional: Add "Add Customer" button --}}
     </div>
 
     {{-- Filter Form --}}
     <div class="card mb-4">
-        <div class="card-body py-2">
+         <div class="card-body py-2">
             <form method="GET" action="{{ route('admin.customers.index') }}" class="form-inline flex-wrap">
                  {{-- Search --}}
                  <div class="form-group mr-2 mb-2">
-                     <label for="search" class="mr-1 d-none d-sm-inline">Search:</label>
-                    <input type="text" id="search" name="search" class="form-control form-control-sm" placeholder="Name or Email..." value="{{ request('search') }}">
+                     <label for="search" class="mr-1 d-none d-sm-inline">بحث:</label>
+                    <input type="text" id="search" name="search" class="form-control form-control-sm" placeholder="الاسم، البريد، الهاتف..." value="{{ request('search') }}">
                 </div>
                  {{-- Status --}}
                  <div class="form-group mr-2 mb-2">
-                    <label for="filter_status" class="mr-1">Status:</label>
+                    <label for="filter_status" class="mr-1">الحالة:</label>
                     <select id="filter_status" name="status" class="form-control form-control-sm">
-                         <option value="all">All Statuses</option>
+                         <option value="all">كل الحالات</option>
                          @foreach($statuses as $key => $label)
                             <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
                          @endforeach
@@ -45,29 +83,20 @@
                 </div>
                  {{-- Banned Status --}}
                  <div class="form-group mr-2 mb-2">
-                    <label for="filter_banned" class="mr-1">Banned:</label>
+                    <label for="filter_banned" class="mr-1">محظور:</label>
                     <select id="filter_banned" name="banned" class="form-control form-control-sm">
-                         <option value="all">All</option>
-                         <option value="1" {{ request('banned') === '1' ? 'selected' : '' }}>Yes</option>
-                         <option value="0" {{ request('banned') === '0' ? 'selected' : '' }}>No</option>
-                    </select>
-                </div>
-                 {{-- Verified Status --}}
-                 <div class="form-group mr-2 mb-2">
-                    <label for="filter_verified" class="mr-1">Verified:</label>
-                    <select id="filter_verified" name="verified" class="form-control form-control-sm">
-                         <option value="all">All</option>
-                         <option value="1" {{ request('verified') === '1' ? 'selected' : '' }}>Yes</option>
-                         <option value="0" {{ request('verified') === '0' ? 'selected' : '' }}>No</option>
+                         <option value="all">الكل</option>
+                         <option value="1" {{ request('banned') === '1' ? 'selected' : '' }}>نعم</option>
+                         <option value="0" {{ request('banned') === '0' ? 'selected' : '' }}>لا</option>
                     </select>
                 </div>
                 {{-- Submit --}}
                 <div class="form-group mb-2">
                     <button type="submit" class="btn btn-secondary btn-sm">
-                        <x-lucide-filter class="icon-sm mr-1"/> Filter
+                        <x-lucide-filter class="icon-sm ms-1"/> تصفية
                     </button>
-                     @if(request()->hasAny(['search', 'status', 'banned', 'verified']))
-                        <a href="{{ route('admin.customers.index') }}" class="btn btn-link btn-sm ml-1">Clear Filters</a>
+                     @if(request()->hasAny(['search', 'status', 'banned']))
+                        <a href="{{ route('admin.customers.index') }}" class="btn btn-link btn-sm ml-1">مسح الفلاتر</a>
                     @endif
                 </div>
             </form>
@@ -80,81 +109,75 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Verified</th>
-                            <th>Banned</th>
-                            <th>Registered</th>
-                            <th>Actions</th>
+                            <th>الاسم</th>
+                            <th>معلومات الاتصال</th>
+                            <th>الحالة</th>
+                            <th>محظور</th>
+                            <th>الرصيد</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($customers as $customer)
                             <tr>
-                                <td><strong>{{ $customer->name }}</strong></td>
-                                <td>{{ $customer->email }}</td>
+                                <td>
+                                    <a href="{{ route('admin.customers.show', $customer->id) }}" class="fw-bold">
+                                        {{ $customer->name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <div>{{ $customer->email }}</div>
+                                    <small class="text-muted">{{ $customer->phone }}</small>
+                                </td>
                                 <td>
                                     <span class="status-badge status-badge-{{ str_replace('_','-',$customer->status) }}">
                                         {{ $statuses[$customer->status] ?? ucfirst($customer->status) }}
                                     </span>
                                 </td>
-                                <td class="text-center">
-                                    @if($customer->is_email_verified)
-                                        <x-lucide-check-circle class="text-success verification-icon" title="Verified"/>
-                                    @else
-                                        <x-lucide-x-circle class="text-warning verification-icon" title="Not Verified"/>
-                                    @endif
-                                </td>
                                 <td>
                                     @if($customer->is_banned)
-                                        <span class="text-danger">Yes</span>
+                                        <span class="text-danger">نعم</span>
                                         <small class="d-block ban-info" title="{{ $customer->ban_reason }}">
-                                            On: {{ $customer->banned_at?->format('d M Y') }}
-                                            @if($customer->ban_reason) | Reason: {{ Str::limit($customer->ban_reason, 30) }} @endif
+                                            بتاريخ: {{ $customer->banned_at?->locale('ar')->translatedFormat('d M Y') }}
                                         </small>
                                     @else
-                                        <span class="text-muted">No</span>
+                                        <span class="text-muted">لا</span>
                                     @endif
                                 </td>
-                                <td>{{ $customer->created_at->format('d M Y') }}</td>
-                                <td class="actions">
-                                    {{-- Ban / Unban Buttons --}}
+                                <td>AED {{ number_format($customer->balance, 2) }}</td>
+                                <td>{{ $customer->created_at->locale('ar')->translatedFormat('d M Y') }}</td>
+                                <td class="actions ws-nowrap">
+                                     <a href="{{ route('admin.customers.show', $customer->id) }}" class="btn btn-sm btn-outline-info" title="عرض التفاصيل">
+                                        <x-lucide-eye />
+                                    </a>
                                     @if(!$customer->is_banned)
                                         <button type="button" class="btn btn-sm btn-outline-warning ban-btn"
-                                                data-bs-toggle="modal" data-bs-target="#banModal"
                                                 data-customer-id="{{ $customer->id }}"
                                                 data-customer-name="{{ $customer->name }}"
-                                                title="Ban Customer">
+                                                title="حظر العميل">
                                             <x-lucide-user-x />
                                         </button>
                                     @else
-                                         <form action="{{ route('admin.customers.unban', $customer->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to unban {{ $customer->name }}?');">
+                                         <form action="{{ route('admin.customers.unban', $customer->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل تريد إلغاء حظر {{ $customer->name }}؟');">
                                             @csrf
-                                            {{-- Use PATCH/PUT if preferred, requires method spoofing --}}
-                                            {{-- @method('PATCH') --}}
-                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Unban Customer">
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="إلغاء حظر العميل">
                                                 <x-lucide-user-check />
                                             </button>
                                         </form>
                                     @endif
-
-                                    {{-- Delete Button --}}
-                                    <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to DELETE customer {{ $customer->name }}? This cannot be undone.');">
+                                    <form action="{{ route('admin.customers.destroy', $customer->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل تريد حذف العميل {{ $customer->name }}؟ هذا الإجراء دائم!');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Customer">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف العميل">
                                             <x-lucide-trash-2 />
                                         </button>
                                     </form>
-
-                                     {{-- Optional View Button --}}
-                                    {{-- <a href="#" class="btn btn-sm btn-outline-info" title="View Details"><x-lucide-eye /></a> --}}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">No customers found matching your criteria.</td>
+                                <td colspan="7" class="text-center py-4">لم يتم العثور على عملاء.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -169,60 +192,73 @@
     </div>
 
     {{-- Ban Reason Modal --}}
-    <div class="modal fade" id="banModal" tabindex="-1" aria-labelledby="banModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form id="banForm" method="POST" action=""> {{-- Action will be set by JS --}}
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="banModalLabel">Ban Customer: <span id="banCustomerName"></span></h5>
-                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-overlay" id="banModalOverlay">
+        <div class="modal-container">
+            <form id="banForm" method="POST" action="">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">حظر العميل: <span id="banCustomerName"></span></h5>
+                    <button type="button" class="modal-close-btn" aria-label="إغلاق">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="ban_reason" class="form-label">سبب الحظر <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="ban_reason" name="ban_reason" rows="4" required></textarea>
+                        <small class="text-muted">قد يتم عرض هذا السبب للعميل أو استخدامه للسجلات الداخلية.</small>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                             <label for="ban_reason" class="form-label">Reason for Banning <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="ban_reason" name="ban_reason" rows="4" required></textarea>
-                            <small class="text-muted">This reason may be displayed to the customer or used for internal records.</small>
-                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Confirm Ban</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-cancel-btn">إلغاء</button>
+                    <button type="submit" class="btn btn-danger">تأكيد الحظر</button>
+                </div>
+            </form>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
-{{-- If using Bootstrap 5 JS for modal --}}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> {{-- Or include locally --}}
-
+{{-- Removed Bootstrap JS for modal --}}
 <script>
+    // Plain JS Modal script from previous response (no translation needed for this logic)
     document.addEventListener('DOMContentLoaded', function () {
-        const banModal = document.getElementById('banModal');
-        if (banModal) {
-            const banForm = document.getElementById('banForm');
-            const banCustomerNameSpan = document.getElementById('banCustomerName');
-            const banReasonTextarea = document.getElementById('ban_reason');
+        const banModalOverlay = document.getElementById('banModalOverlay');
+        if (!banModalOverlay) return; // Exit if modal HTML not present
 
-            banModal.addEventListener('show.bs.modal', function (event) {
-                // Button that triggered the modal
-                const button = event.relatedTarget;
-                // Extract info from data-* attributes
-                const customerId = button.getAttribute('data-customer-id');
-                const customerName = button.getAttribute('data-customer-name');
+        const banForm = document.getElementById('banForm');
+        const banCustomerNameSpan = document.getElementById('banCustomerName');
+        const banReasonTextarea = document.getElementById('ban_reason');
+        const banButtons = document.querySelectorAll('.ban-btn');
+        const closeButtons = banModalOverlay.querySelectorAll('.modal-close-btn, .modal-cancel-btn');
 
-                // Update the modal's content.
-                banCustomerNameSpan.textContent = customerName;
-                // Construct the form action URL
-                const actionUrl = `/admin/customers/${customerId}/ban`; // Adjust URL based on your setup
-                banForm.setAttribute('action', actionUrl);
-                banReasonTextarea.value = ''; // Clear previous reason
-            });
+        function openModal(customerId, customerName) {
+            if (!banForm || !banCustomerNameSpan || !banReasonTextarea) return;
+            banCustomerNameSpan.textContent = customerName;
+            banForm.setAttribute('action', `/admin/customers/${customerId}/ban`); // Adjust if needed
+            banReasonTextarea.value = '';
+            banModalOverlay.classList.add('active');
+            document.addEventListener('keydown', handleEscapeKey);
         }
+
+        function closeModal() {
+            banModalOverlay.classList.remove('active');
+            document.removeEventListener('keydown', handleEscapeKey);
+        }
+
+        function handleEscapeKey(event) {
+            if (event.key === 'Escape') closeModal();
+        }
+
+        banButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                openModal(this.getAttribute('data-customer-id'), this.getAttribute('data-customer-name'));
+            });
+        });
+
+        closeButtons.forEach(button => button.addEventListener('click', closeModal));
+
+        banModalOverlay.addEventListener('click', function(event) {
+            if (event.target === banModalOverlay) closeModal();
+        });
     });
 </script>
 @endpush

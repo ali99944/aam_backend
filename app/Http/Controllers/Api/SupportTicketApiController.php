@@ -22,7 +22,7 @@ class SupportTicketApiController extends Controller
     public function index(Request $request)
     {
         /** @var Customer $customer */
-        $customer = $request->user('sanctum_customer');
+        $customer = $request->user();
 
         $query = $customer->supportTickets()->with('replies.admin:id,name'); // Eager load basic reply info
 
@@ -42,7 +42,7 @@ class SupportTicketApiController extends Controller
     public function store(Request $request)
     {
         /** @var Customer $customer */
-        $customer = $request->user('sanctum_customer');
+        $customer = $request->user();
 
         $validator = Validator::make($request->all(), [
             'subject' => 'required|string|max:255',
@@ -82,7 +82,7 @@ class SupportTicketApiController extends Controller
     public function show(Request $request, SupportTicket $supportTicket) // Route model binding
     {
          /** @var Customer $customer */
-        $customer = $request->user('sanctum_customer');
+        $customer = $request->user();
 
         // Authorization: Check if the customer owns this ticket
         if ($supportTicket->customer_id !== $customer->id) {
@@ -100,7 +100,7 @@ class SupportTicketApiController extends Controller
     public function storeReply(Request $request, SupportTicket $supportTicket)
     {
         /** @var Customer $customer */
-        $customer = $request->user('sanctum_customer');
+        $customer = $request->user();
 
          // Authorization: Check ownership
         if ($supportTicket->customer_id !== $customer->id) {

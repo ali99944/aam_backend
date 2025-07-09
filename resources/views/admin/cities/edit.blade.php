@@ -3,7 +3,7 @@
 
 @section('content')
      <div class="content-header">
-        <h1>Edit City: <span class="text-primary">{{ $city->name }}</span></h1>
+        <h1>تعديل المدينة: <span class="text-primary">{{ $city->name }}</span></h1>
         <small class="text-muted d-block">State: {{ $city->state->name ?? 'N/A' }} | Country: {{ $city->country->name ?? 'N/A' }}</small>
     </div>
 

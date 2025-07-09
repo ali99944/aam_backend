@@ -1,15 +1,16 @@
 @extends('layouts.admin')
-@section('title', 'Action Requests')
+@section('title', 'طلبات الإجراءات') {{-- Action Requests --}}
 
 @push('styles')
 <style>
-/* Status badge styles */
+/* Status badge styles (Can be reused from other views or placed in common.css) */
 .status-badge { font-size: 0.8em; padding: 3px 8px; border-radius: 5px; font-weight: 500;}
-.status-badge-pending { background-color: #fff3cd; color: #664d03; border: 1px solid #ffeeba;}
-.status-badge-approved { background-color: #d1e7dd; color: #0f5132; }
-.status-badge-rejected { background-color: #f8d7da; color: #842029; }
+.status-badge-pending { background-color: #fff3cd; color: #664d03; border: 1px solid #ffeeba;} /* قيد الانتظار */
+.status-badge-approved { background-color: #d1e7dd; color: #0f5132; } /* تمت الموافقة */
+.status-badge-rejected { background-color: #f8d7da; color: #842029; } /* مرفوض */
+
 .action-data-preview {
-    font-family: monospace;
+    font-family: monospace; /* Keeps JSON structure readable */
     font-size: 0.85em;
     background-color: #f8f9fa;
     padding: 5px 8px;
@@ -17,21 +18,32 @@
     max-height: 60px;
     overflow: hidden;
     display: block;
-    white-space: pre;
+    white-space: pre; /* Important for JSON preview */
     word-break: break-all;
-    cursor: pointer; /* Indicate it's expandable */
+    cursor: pointer;
+    text-align: left; /* Ensure JSON is LTR even in RTL page */
+    direction: ltr; /* Ensure JSON is LTR */
 }
-.modal-body pre { background-color: #efefef; padding: 10px; border-radius: 4px; max-height: 400px; overflow: auto;}
+.modal-body pre {
+    background-color: #efefef; padding: 10px; border-radius: 4px;
+    max-height: 400px; overflow: auto;
+    text-align: left; /* LTR for JSON */
+    direction: ltr;   /* LTR for JSON */
+}
 .action-time { font-size: 0.85em; color: #6c757d; }
+/* RTL adjustments for form-inline if not globally handled */
+html[dir="rtl"] .form-inline .form-group.mr-2 { margin-right: 0; margin-left: 0.5rem; }
+html[dir="rtl"] .form-inline .btn-link.ml-1 { margin-left: 0; margin-right: 0.25rem; }
+html[dir="rtl"] .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
 </style>
 @endpush
 
 @section('content')
     <div class="content-header">
-        <h1>Action Requests</h1>
+        <h1>إدارة طلبات الإجراءات</h1>
         <div class="actions">
             <a href="{{ route('admin.action-requests.create') }}" class="btn btn-outline-primary">
-                <x-lucide-plus class="icon-sm mr-1"/> Create Manual Request
+                <x-lucide-plus class="icon-sm ms-1"/> إنشاء طلب يدوي {{-- Flipped icon for RTL --}}
             </a>
         </div>
     </div>
@@ -41,22 +53,22 @@
         <div class="card-body py-2">
             <form method="GET" action="{{ route('admin.action-requests.index') }}" class="form-inline flex-wrap">
                  {{-- Search --}}
-                 <div class="form-group mr-2 mb-2">
-                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search ID or Type..." value="{{ request('search') }}">
+                 <div class="form-group mr-2 mb-2"> {{-- mr-2 becomes ml-2 in RTL via CSS or inline style --}}
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="بحث بالرقم أو النوع..." value="{{ request('search') }}">
                 </div>
                  {{-- Status --}}
                  <div class="form-group mr-2 mb-2">
                     <select name="status" class="form-select form-select-sm">
-                         <option value="all">All Statuses</option>
+                         <option value="all">كل الحالات</option>
                          @foreach($statuses as $key => $label)
-                            <option value="{{ $key }}" {{ request('status', 'pending') == $key ? 'selected' : '' }}>{{ $label }}</option> {{-- Default to Pending --}}
+                            <option value="{{ $key }}" {{ request('status', 'pending') == $key ? 'selected' : '' }}>{{ $label }}</option>
                          @endforeach
                     </select>
                 </div>
                  {{-- Action Type --}}
                  <div class="form-group mr-2 mb-2">
                     <select name="action_type" class="form-select form-select-sm">
-                         <option value="all">All Action Types</option>
+                         <option value="all">كل أنواع الإجراءات</option>
                          @foreach($actionTypes as $key => $label)
                             <option value="{{ $key }}" {{ request('action_type') == $key ? 'selected' : '' }}>{{ $label }}</option>
                          @endforeach
@@ -64,10 +76,10 @@
                 </div>
                 <div class="form-group mb-2">
                     <button type="submit" class="btn btn-secondary btn-sm">
-                        <x-lucide-filter class="icon-sm mr-1"/> Filter
+                        <x-lucide-filter class="icon-sm ms-1"/> تصفية
                     </button>
                      @if(request()->hasAny(['search', 'status', 'action_type']))
-                        <a href="{{ route('admin.action-requests.index', ['status' => 'pending']) }}" class="btn btn-link btn-sm ml-1">Clear & Show Pending</a>
+                        <a href="{{ route('admin.action-requests.index', ['status' => 'pending']) }}" class="btn btn-link btn-sm ml-1">مسح & عرض قيد الانتظار</a>
                     @endif
                 </div>
             </form>
@@ -80,15 +92,15 @@
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Action Type</th>
-                            <th>Data Preview</th>
-                            <th>Requested By</th>
-                            <th>Requested At</th>
-                            <th>Status</th>
-                            <th>Processed By</th>
-                            <th>Processed At</th>
-                            <th>Actions</th>
+                            <th>الرقم</th>
+                            <th>نوع الإجراء</th>
+                            <th>معاينة البيانات</th>
+                            <th>مقدم الطلب</th>
+                            <th>تاريخ الطلب</th>
+                            <th>الحالة</th>
+                            <th>مُعالج بواسطة</th>
+                            <th>تاريخ المعالجة</th>
+                            <th>إجراءات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -100,37 +112,36 @@
                                     <code class="d-block"><small>{{ $actionRequest->action_type }}</small></code>
                                 </td>
                                 <td>
-                                     <code class="action-data-preview" title="Click to view full data"
+                                     <code class="action-data-preview" title="انقر لعرض البيانات كاملة"
                                            data-bs-toggle="modal" data-bs-target="#dataPreviewModal"
                                            data-request-id="{{ $actionRequest->id }}"
                                            data-request-type="{{ $actionRequest->action_type_name }}"
-                                           data-request-data="{{ json_encode($actionRequest->data, JSON_PRETTY_PRINT) }}">
-                                        {{ Str::limit(json_encode($actionRequest->data), 60) }}
+                                           data-request-data="{{ json_encode($actionRequest->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) }}"> {{-- Added JSON_UNESCAPED_UNICODE --}}
+                                        {{ Str::limit(json_encode($actionRequest->data, JSON_UNESCAPED_UNICODE), 60) }}
                                      </code>
                                 </td>
-                                <td>{{ $actionRequest->requestor->name ?? 'N/A' }}</td>
-                                <td class="action-time">{{ $actionRequest->created_at->diffForHumans() }}</td>
+                                <td>{{ $actionRequest->requestor->name ?? 'غير متوفر' }}</td>
+                                <td class="action-time">{{ $actionRequest->created_at->locale('ar')->diffForHumans() }}</td> {{-- Arabic diffForHumans --}}
                                 <td>
                                     <span class="status-badge status-badge-{{ $actionRequest->status }}">
                                         {{ $statuses[$actionRequest->status] ?? ucfirst($actionRequest->status) }}
                                     </span>
                                     @if($actionRequest->status == 'rejected' && $actionRequest->rejection_reason)
                                         <small class="d-block text-danger" title="{{ $actionRequest->rejection_reason }}">
-                                            <x-lucide-info size="14"/> {{ Str::limit($actionRequest->rejection_reason, 30) }}
+                                            <x-lucide-info size="14" class="ms-1"/> {{ Str::limit($actionRequest->rejection_reason, 30) }}
                                         </small>
                                     @endif
                                 </td>
                                 <td>{{ $actionRequest->processor->name ?? '-' }}</td>
-                                <td class="action-time">{{ $actionRequest->processed_at?->diffForHumans() ?? '-' }}</td>
-                                <td class="actions">
+                                <td class="action-time">{{ $actionRequest->processed_at?->locale('ar')->diffForHumans() ?? '-' }}</td>
+                                <td class="actions ws-nowrap"> {{-- Added ws-nowrap for buttons --}}
                                     @if($actionRequest->status === 'pending')
                                         {{-- Approve Button --}}
-                                        <form action="{{ route('admin.action-requests.process', $actionRequest->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Approve this request?');">
+                                        <form action="{{ route('admin.action-requests.process', $actionRequest->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل أنت متأكد من الموافقة على هذا الطلب؟');">
                                             @csrf
-                                             {{-- @method('PATCH') or @method('PUT') --}}
                                             <input type="hidden" name="process_action" value="approve">
-                                            <button type="submit" class="btn btn-sm btn-success" title="Approve Request">
-                                                <x-lucide-check /> Approve
+                                            <button type="submit" class="btn btn-sm btn-success" title="الموافقة على الطلب">
+                                                <x-lucide-check /> موافقة
                                             </button>
                                         </form>
                                          {{-- Reject Button (triggers modal) --}}
@@ -138,8 +149,8 @@
                                                 data-bs-toggle="modal" data-bs-target="#rejectModal"
                                                 data-request-id="{{ $actionRequest->id }}"
                                                 data-request-type-name="{{ $actionRequest->action_type_name }}"
-                                                title="Reject Request">
-                                            <x-lucide-x /> Reject
+                                                title="رفض الطلب">
+                                            <x-lucide-x /> رفض
                                         </button>
                                          {{-- Display processing errors for this specific request --}}
                                         @if($errors->hasBag('process_' . $actionRequest->id))
@@ -150,14 +161,12 @@
                                             </div>
                                         @endif
                                     @else
-                                        <span class="text-muted">Processed</span>
+                                        <span class="text-muted">تمت المعالجة</span>
                                     @endif
-                                     {{-- Optional: Add Delete button for specific statuses/roles --}}
-                                     {{-- <form action="{{ route('admin.action-requests.destroy', $actionRequest->id) }}" method="POST" ...> ... </form> --}}
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="9" class="text-center py-4">No action requests found.</td></tr>
+                            <tr><td colspan="9" class="text-center py-4">لم يتم العثور على طلبات إجراءات.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -173,17 +182,17 @@
 
     {{-- Data Preview Modal --}}
     <div class="modal fade" id="dataPreviewModal" tabindex="-1" aria-labelledby="dataPreviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg"> {{-- Larger modal --}}
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                  <div class="modal-header">
-                     <h5 class="modal-title" id="dataPreviewModalLabel">Data for Request #<span id="previewRequestId"></span> (<span id="previewRequestType"></span>)</h5>
-                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     <h5 class="modal-title" id="dataPreviewModalLabel">بيانات الطلب رقم #<span id="previewRequestId"></span> (<span id="previewRequestType"></span>)</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                  </div>
                  <div class="modal-body">
                      <pre id="previewRequestDataJson"></pre>
                  </div>
                  <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
                  </div>
             </div>
         </div>
@@ -195,21 +204,20 @@
             <div class="modal-content">
                 <form id="rejectForm" method="POST" action=""> {{-- Action set by JS --}}
                     @csrf
-                     {{-- @method('PATCH') or @method('PUT') --}}
                     <input type="hidden" name="process_action" value="reject">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="rejectModalLabel">Reject Request #<span id="rejectRequestId"></span> (<span id="rejectRequestTypeName"></span>)</h5>
-                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title" id="rejectModalLabel">رفض الطلب رقم #<span id="rejectRequestId"></span> (<span id="rejectRequestTypeName"></span>)</h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                             <label for="rejection_reason" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
+                             <label for="rejection_reason" class="form-label">سبب الرفض <span class="text-danger">*</span></label>
                             <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="4" required></textarea>
                          </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Confirm Rejection</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="submit" class="btn btn-danger">تأكيد الرفض</button>
                     </div>
                 </form>
             </div>
@@ -223,6 +231,9 @@
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+ // Keep the JavaScript for modals the same as your previous version,
+ // as it correctly handles dynamic content and form actions.
+ // No translation needed for the JS logic itself, only for displayed text if any.
  document.addEventListener('DOMContentLoaded', function () {
     // --- Data Preview Modal ---
     const dataPreviewModal = document.getElementById('dataPreviewModal');
@@ -232,14 +243,20 @@
         const previewRequestDataJsonPre = document.getElementById('previewRequestDataJson');
 
         dataPreviewModal.addEventListener('show.bs.modal', function (event) {
-            const triggerElement = event.relatedTarget; // Element that triggered modal
+            const triggerElement = event.relatedTarget;
             const requestId = triggerElement.getAttribute('data-request-id');
             const requestType = triggerElement.getAttribute('data-request-type');
             const requestData = triggerElement.getAttribute('data-request-data');
 
             previewRequestIdSpan.textContent = requestId;
             previewRequestTypeSpan.textContent = requestType;
-            previewRequestDataJsonPre.textContent = requestData; // Already formatted JSON
+            try {
+                // Attempt to parse and re-stringify with pretty print if not already done,
+                // but the data-attribute already has it pretty printed.
+                previewRequestDataJsonPre.textContent = JSON.stringify(JSON.parse(requestData), null, 2);
+            } catch (e) {
+                previewRequestDataJsonPre.textContent = requestData; // Fallback to raw data if parse fails
+            }
         });
     }
 
@@ -258,12 +275,10 @@
 
              rejectRequestIdSpan.textContent = requestId;
              rejectRequestTypeNameSpan.textContent = requestTypeName;
-             rejectReasonTextarea.value = ''; // Clear previous reason
-             // Set form action dynamically
-             rejectForm.action = `/admin/action-requests/${requestId}/process`; // Adjust URL if needed
+             rejectReasonTextarea.value = '';
+             rejectForm.action = `/admin/action-requests/${requestId}/process`;
          });
      }
-
  });
 </script>
 @endpush

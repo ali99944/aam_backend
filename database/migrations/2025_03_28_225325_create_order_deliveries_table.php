@@ -17,10 +17,12 @@ return new class extends Migration
         Schema::create('order_deliveries', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Order::class);
-            $table->foreignIdFor(DeliveryPersonnel::class);
-            $table->foreignIdFor(DeliveryCompany::class);
+            $table->foreignIdFor(DeliveryPersonnel::class)->nullable();
+            $table->foreignIdFor(DeliveryCompany::class)->nullable();
+
+
             $table->string('tracking_number');
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('delivery_status', ['pending', 'shipped', 'out_for_delivery', 'delivered', 'failed_attempt'])->default('pending');
             $table->string('delivery_date');
             $table->string('confirmation_image')->nullable();
             $table->timestamps();

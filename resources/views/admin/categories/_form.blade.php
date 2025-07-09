@@ -5,7 +5,7 @@
 <div class="row"> {{-- Use row/col for better layout optional --}}
     <div class="col-md-8">
         <div class="form-group mb-3">
-            <label for="name">Category Name</label>
+            <label for="name">اسم القسم</label>
             <input type="text" id="name" name="name" class="form-control @error('name') is-invalid @enderror"
                    value="{{ old('name', $category->name ?? '') }}" required>
             @error('name')
@@ -14,7 +14,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="description">Description</label>
+            <label for="description">الوصف</label>
             <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror"
                       rows="4">{{ old('description', $category->description ?? '') }}</textarea>
             @error('description')
@@ -23,7 +23,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="cover_image">Cover Image</label>
+            <label for="cover_image">صورة الغلاف</label>
             <input type="file" id="cover_image" name="cover_image" class="form-control @error('cover_image') is-invalid @enderror" accept="image/jpeg,image/png,image/gif,image/webp">
             <small class="form-text text-muted">Accepted formats: JPG, PNG, GIF, WEBP. Max size: 2MB.</small>
             @error('cover_image')
@@ -38,7 +38,7 @@
         </div>
 
         <div class="form-group mb-3">
-            <label for="icon_image">Icon (SVG)</label>
+            <label for="icon_image">الايقونة (SVG)</label>
             <input type="file" id="icon_image" name="icon_image" class="form-control @error('icon_image') is-invalid @enderror" accept="image/svg+xml">
              <small class="form-text text-muted">Accepted format: SVG. Max size: 512KB.</small>
             @error('icon_image')

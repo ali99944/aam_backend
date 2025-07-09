@@ -24,7 +24,9 @@ class DatabaseSeeder extends Seeder
             SeoSeeder::class,
             FaqCategorySeeder::class,
             FaqSeeder::class,
-            PolicySeeder::class
+            PolicySeeder::class,
+            BannerSeeder::class,
+            TestimonialSeeder::class
         ]);
     }
 }

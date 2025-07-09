@@ -16,10 +16,8 @@ return new class extends Migration
         Schema::create('cities', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(State::class)->nullable();
-            $table->foreignIdFor(Country::class)->nullable(); // Redundant but useful
+            $table->foreignIdFor(Country::class)->nullable();
             $table->string('name');
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log; // For logging errors
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Milon\Barcode\Facades\DNS1DFacade as DNS1D; // Import DNS1D facade
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
@@ -102,7 +103,8 @@ class ProductController extends Controller
                 'discount_id' => $validated['discount_id'] ?? null,
                 'status' => $validated['status'],
                 'is_public' => $request->has('is_public'),
-                'overall_rating' => 0
+                'overall_rating' => 0,
+                'barcode' => DNS1D::getBarcodePNG($validated['sku_code'] ?? $product->sku_code, 'C128') // Generate and save barcode
             ]);
 
             // 3. Handle Additional Images
@@ -201,7 +203,7 @@ class ProductController extends Controller
 
 
             // 2. Update Product Core Details
-            $product->update([
+            $updateData = [
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'main_image' => $mainImagePath,
@@ -209,13 +211,24 @@ class ProductController extends Controller
                 'sell_price' => $validated['sell_price'],
                 'stock' => $validated['stock'] ?? $product->stock, // Keep old if not provided?
                 'lower_stock_warn' => $validated['lower_stock_warn'] ?? $product->lower_stock_warn,
-                'sku_code' => $validated['sku_code'] ?? $product->sku_code,
                 'sub_category_id' => $validated['sub_category_id'],
                 'brand_id' => $validated['brand_id'],
                 'discount_id' => $validated['discount_id'] ?? null, // Allow unsetting discount
                 'status' => $validated['status'],
                 'is_public' => $request->has('is_public'),
-            ]);
+            ];
+
+            // Handle SKU and Barcode update
+            $newSkuCode = $validated['sku_code'] ?? $product->sku_code;
+            if ($newSkuCode !== $product->sku_code || ($newSkuCode && !$product->barcode)) {
+                $updateData['sku_code'] = $newSkuCode;
+                $updateData['barcode'] = DNS1D::getBarcodePNG($newSkuCode, 'C128');
+            } elseif (isset($validated['sku_code']) && $validated['sku_code'] === $product->sku_code && !$product->barcode && $product->sku_code) {
+                // Case: SKU hasn't changed, but barcode was missing and SKU exists, so generate it.
+                $updateData['barcode'] = DNS1D::getBarcodePNG($product->sku_code, 'C128');
+            }
+
+            $product->update($updateData);
 
             // 3. Handle Additional Images (More complex: Add new, Remove existing)
             // Delete marked images

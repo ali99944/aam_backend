@@ -38,10 +38,10 @@ class Button extends Component
     public function variantClasses()
     {
         return [
-            'primary' => 'bg-[#00998F] text-white hover:bg-[#00998F]/90',
-            'secondary' => 'bg-[#D2EAE8] text-[#00998F] hover:bg-[#D2EAE8]/80',
-            'outline' => 'bg-transparent text-[#00998F] border border-[#00998F] hover:bg-[#D2EAE8]/30',
-            'ghost' => 'bg-transparent text-[#00998F] hover:bg-[#D2EAE8]/30',
+            'primary' => 'bg-primary text-white hover:bg-primary/90',
+            'secondary' => 'bg-secondary text-primary hover:bg-secondary/80',
+            'outline' => 'bg-transparent text-primary border border-primary hover:bg-secondary/30',
+            'ghost' => 'bg-transparent text-primary hover:bg-secondary/30',
             'danger' => 'bg-red-500 text-white hover:bg-red-600',
         ][$this->variant];
     }

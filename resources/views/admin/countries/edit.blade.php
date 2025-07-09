@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Edit Country: <span class="text-primary">{{ $country->name }}</span></h1>
+        <h1>تعديل الدولة: <span class="text-primary">{{ $country->name }}</span></h1>
     </div>
 
     <div class="card">

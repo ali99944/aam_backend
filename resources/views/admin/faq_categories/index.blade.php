@@ -1,29 +1,105 @@
+{{-- resources/views/admin/faq_categories/index.blade.php --}}
 @extends('layouts.admin')
-@section('title', 'Manage FAQ Categories')
-@push('styles') <style> /* Status badge styles */ </style> @endpush
+@section('title', 'إدارة فئات الأسئلة الشائعة')
+
+@push('styles')
+<style>
+.status-badge { font-size: 0.8em; padding: 3px 8px; border-radius: 5px; font-weight: 500; }
+.status-badge-active { background-color: #d1e7dd; color: #0f5132; }
+.status-badge-inactive { background-color: #e2e3e5; color: #41464b; }
+
+/* RTL Adjustments if not global */
+html[dir="rtl"] .form-inline .form-group.mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+html[dir="rtl"] .form-inline label.mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .form-inline .btn-link.ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+html[dir="rtl"] .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+html[dir="rtl"] .ms-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+html[dir="rtl"] .ms-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+.ws-nowrap { white-space: nowrap; }
+</style>
+@endpush
+
 @section('content')
     <div class="content-header">
-        <h1>Manage FAQ Categories</h1>
-        <div class="actions"><a href="{{ route('admin.faq-categories.create') }}" class="btn btn-primary"><x-lucide-plus class="icon-sm mr-2"/> Add Category</a></div>
+        <h1>إدارة فئات الأسئلة الشائعة</h1>
+        <div class="actions">
+            <a href="{{ route('admin.faq-categories.create') }}" class="btn btn-primary">
+                <x-lucide-plus class="icon-sm ms-2"/> إضافة فئة
+            </a>
+            <a href="{{ route('admin.faqs.index') }}" class="btn btn-outline-secondary ms-2">
+                <x-lucide-help-circle class="icon-sm ms-1"/> إدارة الأسئلة الشائعة
+            </a>
+        </div>
     </div>
+
     {{-- Search Form --}}
-    <div class="card mb-4"><div class="card-body py-2"> <form method="GET" action="{{ route('admin.faq-categories.index') }}" class="form-inline"> ... </form></div></div>
-    <div class="card"><div class="card-body p-0"><div class="table-responsive"><table class="admin-table">
-        <thead><tr><th>Name</th><th>Status</th><th>Order</th><th>Actions</th></tr></thead>
-        <tbody>
-            @forelse ($categories as $category)
-                <tr>
-                    <td><strong>{{ $category->name }}</strong></td>
-                    <td>{{-- Status Badge --}}</td>
-                    <td>{{ $category->display_order }}</td>
-                    <td class="actions">
-                        <a href="{{ route('admin.faq-categories.edit', $category->id) }}" class="btn btn-sm btn-outline-primary" title="Edit"><x-lucide-pencil /></a>
-                        <form action="{{ route('admin.faq-categories.destroy', $category->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('...');"> @csrf @method('DELETE') <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete"><x-lucide-trash-2 /></button></form>
-                    </td>
-                </tr>
-            @empty <tr><td colspan="4" class="text-center py-4">No categories found.</td></tr> @endforelse
-        </tbody>
-    </table></div></div>
-    @if ($categories->hasPages()) <div class="card-footer">{{ $categories->appends(request()->query())->links() }}</div> @endif
-</div>
+    <div class="card mb-4">
+        <div class="card-body py-2">
+            <form method="GET" action="{{ route('admin.faq-categories.index') }}" class="form-inline flex-wrap">
+                <div class="form-group mr-2 mb-2">
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="بحث بالاسم..." value="{{ request('search') }}">
+                </div>
+                 <div class="form-group mr-2 mb-2">
+                    <select name="is_active" class="form-select form-select-sm">
+                        <option value="all">كل الحالات</option>
+                        <option value="1" {{ request('is_active') == '1' ? 'selected' : '' }}>فعالة</option>
+                        <option value="0" {{ request('is_active') == '0' && request()->filled('is_active') ? 'selected' : '' }}>غير فعالة</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <button type="submit" class="btn btn-secondary btn-sm">
+                        <x-lucide-filter class="icon-sm ms-1"/> تصفية
+                    </button>
+                     @if(request()->hasAny(['search', 'is_active']))
+                        <a href="{{ route('admin.faq-categories.index') }}" class="btn btn-link btn-sm ml-1">مسح الفلاتر</a>
+                    @endif
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الوصف</th>
+                            <th>الحالة</th>
+                            <th>ترتيب العرض</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($categories as $category)
+                            <tr>
+                                <td><strong>{{ $category->name }}</strong></td>
+                                <td>{{ Str::limit($category->description, 70) }}</td>
+                                <td class="text-center">
+                                    @if($category->is_active)
+                                        <span class="status-badge status-badge-active" title="فعالة"><x-lucide-check-circle /></span>
+                                    @else
+                                        <span class="status-badge status-badge-inactive" title="غير فعالة"><x-lucide-x-circle /></span>
+                                    @endif
+                                </td>
+                                <td class="text-center">{{ $category->display_order }}</td>
+                                <td class="actions ws-nowrap">
+                                    <a href="{{ route('admin.faq-categories.edit', $category->id) }}" class="btn btn-sm btn-outline-primary" title="تعديل"><x-lucide-pencil /></a>
+                                    <form action="{{ route('admin.faq-categories.destroy', $category->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل أنت متأكد من حذف هذه الفئة؟ قد يؤثر هذا على الأسئلة المرتبطة بها.');">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف"><x-lucide-trash-2 /></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="text-center py-4">لم يتم العثور على فئات للأسئلة الشائعة.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @if ($categories->hasPages()) <div class="card-footer">{{ $categories->appends(request()->query())->links() }}</div> @endif
+    </div>
 @endsection

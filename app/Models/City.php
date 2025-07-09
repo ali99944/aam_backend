@@ -14,8 +14,6 @@ class City extends Model
         'state_id',
         'country_id',
         'name',
-        'latitude',
-        'longitude',
         'is_active',
 
     ];

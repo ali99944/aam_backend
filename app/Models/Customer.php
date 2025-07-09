@@ -102,4 +102,19 @@ class Customer extends Authenticatable
         return $this->belongsToMany(Product::class, 'product_visits', 'customer_id', 'product_id')
                     ->withTimestamps(); // Track when visited
     }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }

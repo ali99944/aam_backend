@@ -3,7 +3,7 @@
 
 @section('content')
     <div class="content-header">
-        <h1>Add New Page SEO Settings</h1>
+        <h1>اضف تحسين محرك بحث لصفحة</h1>
     </div>
 
     <form method="POST" action="{{ route('admin.seo.store') }}" class="admin-form" enctype="multipart/form-data">

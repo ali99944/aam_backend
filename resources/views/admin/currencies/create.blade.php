@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Add Currency')
 @section('content') <div class="content-header">
-        <h1>Add New Currency</h1>
+        <h1>اضافة عملة جديدة</h1>
     </div>
     <div class="card">
         <div class="card-body">

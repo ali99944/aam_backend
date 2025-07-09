@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'Contact Messages')
+@section('title', 'رسائل التواصل')
 
 @push('styles')
 <style>
@@ -9,13 +9,19 @@ html[dir="rtl"] .message-unread td:first-child { border-left: none; border-right
 .subject-link { color: var(--dark-color); font-weight: 500; text-decoration: none; }
 .subject-link:hover { color: var(--primary-color); }
 .message-unread .subject-link { font-weight: 700; }
+
+/* RTL Adjustments for form-inline & icons if not globally handled */
+html[dir="rtl"] .form-inline .form-group.mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+html[dir="rtl"] .form-inline label.mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+html[dir="rtl"] .form-inline .btn-link.ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+html[dir="rtl"] .icon-xs { margin-right: 0 !important; margin-left: 0.25rem !important; } /* Adjust icon margin for RTL */
 </style>
 @endpush
 
 
 @section('content')
     <div class="content-header">
-        <h1>Contact Messages</h1>
+        <h1>رسائل التواصل</h1>
          {{-- Unread Count shown in sidebar link now --}}
     </div>
 
@@ -23,23 +29,23 @@ html[dir="rtl"] .message-unread td:first-child { border-left: none; border-right
     <div class="card mb-4">
         <div class="card-body py-2">
             <form method="GET" action="{{ route('admin.contact-messages.index') }}" class="form-inline">
-                 <div class="form-group mr-2">
-                    <label for="filter_status" class="mr-1">Show:</label>
+                 <div class="form-group mr-2"> {{-- mr-2 becomes ml-2 in RTL via CSS or global Bootstrap RTL --}}
+                    <label for="filter_status" class="mr-1">عرض:</label> {{-- mr-1 becomes ml-1 in RTL --}}
                     <select id="filter_status" name="filter" class="form-control form-control-sm" onchange="this.form.submit()">
-                         <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>All Messages</option>
-                         <option value="unread" {{ request('filter') == 'unread' ? 'selected' : '' }}>Unread Only</option>
-                         <option value="read" {{ request('filter') == 'read' ? 'selected' : '' }}>Read Only</option>
+                         <option value="all" {{ request('filter') == 'all' ? 'selected' : '' }}>كل الرسائل</option>
+                         <option value="unread" {{ request('filter') == 'unread' ? 'selected' : '' }}>غير المقروءة فقط</option>
+                         <option value="read" {{ request('filter') == 'read' ? 'selected' : '' }}>المقروءة فقط</option>
                     </select>
                 </div>
                 {{-- Add search input if needed --}}
                 {{--
                 <div class="form-group mr-2">
-                     <input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." value="{{ request('search') }}">
+                     <input type="text" name="search" class="form-control form-control-sm" placeholder="بحث..." value="{{ request('search') }}">
                 </div>
-                <button type="submit" class="btn btn-secondary btn-sm">Search</button>
+                <button type="submit" class="btn btn-secondary btn-sm">بحث</button>
                 --}}
                  @if(request('filter') && request('filter') != 'all')
-                    <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-link btn-sm ml-1">Clear Filter</a>
+                    <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-link btn-sm ml-1">مسح الفلتر</a> {{-- ml-1 becomes mr-1 in RTL --}}
                  @endif
             </form>
         </div>
@@ -51,10 +57,10 @@ html[dir="rtl"] .message-unread td:first-child { border-left: none; border-right
                  <table class="admin-table">
                      <thead>
                          <tr>
-                             <th style="width: 25%;">Sender</th>
-                             <th>Subject</th>
-                             <th style="width: 20%;">Received</th>
-                             <th style="width: 10%;">Actions</th>
+                             <th style="width: 25%;">المرسل</th>
+                             <th>الموضوع</th>
+                             <th style="width: 20%;">تاريخ الاستلام</th>
+                             <th style="width: 10%;">الإجراءات</th>
                          </tr>
                      </thead>
                      <tbody>
@@ -69,22 +75,22 @@ html[dir="rtl"] .message-unread td:first-child { border-left: none; border-right
                                  </td>
                                  <td>
                                      <a href="{{ route('admin.contact-messages.show', $message->id) }}" class="subject-link">
-                                         {{ $message->subject ?? '(No Subject)' }}
+                                         {{ $message->subject ?? '(بدون موضوع)' }}
                                      </a>
                                      <p class="mb-0 text-muted"><small>{{ Str::limit($message->message, 100) }}</small></p>
                                  </td>
                                  <td>
-                                     {{ $message->created_at->diffForHumans() }}
-                                     <small class="d-block text-muted">{{ $message->created_at->format('d M Y, H:i') }}</small>
+                                     {{ $message->created_at->locale('ar')->diffForHumans() }} {{-- Arabic relative time --}}
+                                     <small class="d-block text-muted">{{ $message->created_at->locale('ar')->translatedFormat('d M Y, H:i') }}</small> {{-- Arabic date format --}}
                                  </td>
                                  <td class="actions">
-                                     <a href="{{ route('admin.contact-messages.show', $message->id) }}" class="btn btn-sm btn-outline-info" title="View">
+                                     <a href="{{ route('admin.contact-messages.show', $message->id) }}" class="btn btn-sm btn-outline-info" title="عرض">
                                          <x-lucide-eye />
                                      </a>
-                                     <form action="{{ route('admin.contact-messages.destroy', $message->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure you want to delete this message?');">
+                                     <form action="{{ route('admin.contact-messages.destroy', $message->id) }}" method="POST" class="d-inline-block" onsubmit="return confirm('هل أنت متأكد من حذف هذه الرسالة؟');">
                                          @csrf
                                          @method('DELETE')
-                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                         <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف">
                                              <x-lucide-trash-2 />
                                          </button>
                                      </form>
@@ -92,14 +98,14 @@ html[dir="rtl"] .message-unread td:first-child { border-left: none; border-right
                                       {{-- @if($message->is_read)
                                         <form action="{{ route('admin.contact-messages.markUnread', $message->id) }}" method="POST" class="d-inline-block">
                                             @csrf @method('PATCH')
-                                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="Mark as Unread"><x-lucide-mail-open/></button>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary" title="تحديد كغير مقروءة"><x-lucide-mail-open/></button>
                                         </form>
                                       @endif --}}
                                  </td>
                              </tr>
                          @empty
                              <tr>
-                                 <td colspan="4" class="text-center py-4">No contact messages found.</td>
+                                 <td colspan="4" class="text-center py-4">لم يتم العثور على رسائل تواصل.</td>
                              </tr>
                          @endforelse
                      </tbody>
