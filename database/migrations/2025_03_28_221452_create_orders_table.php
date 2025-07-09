@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('customer_name');
             $table->string('customer_email');
             $table->string('customer_phone');
-            
+
             // Financials
             $table->decimal('subtotal', 10, 2);
             $table->decimal('delivery_fee', 10, 2);
@@ -42,7 +42,7 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index('order_status');
-            $table->index('delivery_status');
+            // $table->index('delivery_status');
         });
     }
     public function down(): void
