@@ -22,7 +22,7 @@
 
     {{-- Main Admin CSS --}}
     {{-- <link rel="stylesheet" href="{{ asset('app.css') }}"> --}}
-    <link rel="stylesheet" href="/app.css" />
+    <link rel="stylesheet" href="{{ asset('app.css') }}" />
 
     {{-- Add page-specific CSS if needed --}}
     @stack('styles')
